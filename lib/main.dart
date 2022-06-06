@@ -1,11 +1,13 @@
 import 'dart:async';
 
-import 'package:document_bank/core/router/routes_manager.dart';
 import 'package:document_bank/core/resources/theme_manager.dart';
+import 'package:document_bank/core/router/routes_manager.dart';
+import 'package:document_bank/firebase_options.dart';
 import 'package:document_bank/presentation/auth/blocs/auth_bloc/auth_bloc.dart';
 import 'package:document_bank/presentation/auth/blocs/email_verify/email_verify_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/login_bloc/login_bloc.dart';
 import 'package:document_bank/presentation/auth/blocs/register/register_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,6 +17,9 @@ import 'core/di /app_module.dart';
 void main() {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     await initAppModule();
     runApp(const MyApp());
   }, (error, stack) {});

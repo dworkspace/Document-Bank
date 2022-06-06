@@ -7,6 +7,10 @@ abstract class RemoteSource {
   Future<LoginResponse> login(LoginRequest loginRequest);
   Future<String> register(RegisterRequest registerRequest);
   Future<String> activateAccount(ActivateAccountRequest activateAccountRequest);
+  Future<String> forgotPassword(String email);
+  Future<String> verifyOtpForForgotPassword(
+      ActivateAccountRequest verifyOtpRequest);
+  
 }
 
 class RemoteSourceImpl implements RemoteSource {
@@ -58,6 +62,41 @@ class RemoteSourceImpl implements RemoteSource {
       final loginResponse = await dio.post(
         "/activate-account",
         data: activateAccountRequest.toMap(),
+      );
+      final mapBody = loginResponse.data;
+      return mapBody['message'];
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+/*
+ * FORGOT PASSWORD
+ */
+  @override
+  Future<String> forgotPassword(String email) async {
+    try {
+      final loginResponse = await dio.post(
+        "/forget-password",
+        data: {"email": email},
+      );
+      final mapBody = loginResponse.data;
+      return mapBody['message'];
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  /*
+   * VERIFY OTP FOR FORGOT PASSWORD 
+   */
+  @override
+  Future<String> verifyOtpForForgotPassword(
+      ActivateAccountRequest verifyOtpRequest) async {
+    try {
+      final loginResponse = await dio.post(
+        "/forget-password-verify-otp",
+        data: verifyOtpRequest.toMap(),
       );
       final mapBody = loginResponse.data;
       return mapBody['message'];

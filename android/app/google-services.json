@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "934787248639",
+    "project_id": "document-bank",
+    "storage_bucket": "document-bank.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934787248639:android:945ff60b99fc395f03b7ca",
+        "android_client_info": {
+          "package_name": "com.workspace.db"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "934787248639-59s0r1nhvtpgm1cmfaloq73o1sk946nj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyColvOtDdoji8MWphlo4SSRsXjdSbP3zIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "934787248639-59s0r1nhvtpgm1cmfaloq73o1sk946nj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
