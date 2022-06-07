@@ -2,23 +2,25 @@ import 'package:document_bank/core/resources/color_manager.dart';
 import 'package:document_bank/core/resources/font_manager.dart';
 import 'package:document_bank/core/resources/styles_manager.dart';
 import 'package:document_bank/core/router/arguments/verify_email_arg.dart';
-import 'package:document_bank/core/router/routes_manager.dart';
 import 'package:document_bank/core/utils/dialog_utils.dart';
-import 'package:document_bank/presentation/auth/blocs/email_verify/email_verify_cubit.dart';
+import 'package:document_bank/presentation/auth/blocs/otp_verify/otp_verify_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class EmailConfirmPage extends StatefulWidget {
-  const EmailConfirmPage({Key? key, required this.arg}) : super(key: key);
+import '../../../core/router/arguments/reset_forgot_password_args.dart';
+import '../../../core/router/routes_manager.dart';
+
+class OtpVerifyPage extends StatefulWidget {
+  const OtpVerifyPage({Key? key, required this.arg}) : super(key: key);
 
   final VerifyEmailArg arg;
 
   @override
-  State<EmailConfirmPage> createState() => _EmailConfirmPageState();
+  State<OtpVerifyPage> createState() => _OtpVerifyPageState();
 }
 
-class _EmailConfirmPageState extends State<EmailConfirmPage> {
+class _OtpVerifyPageState extends State<OtpVerifyPage> {
   final TextEditingController _pin1Ctrl = TextEditingController();
   final TextEditingController _pin2Ctrl = TextEditingController();
   final TextEditingController _pin3Ctrl = TextEditingController();
@@ -29,22 +31,43 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
   String? pinErrorMsg;
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EmailVerifyCubit, EmailVerifyState>(
+    return BlocListener<OtpVerifyCubit, OtpVerifyState>(
       listener: (context, state) {
-        if (state is EmailVerifyLoading) {
+        if (state is OtpVerifyLoading) {
           DialogUtils.buildLoadingDialog(context);
         }
-        if (state is EmailVerifyFailure) {
+        if (state is OtpVerifyFail) {
           Navigator.pop(context);
           DialogUtils.buildErrorMessageDialog(
             context,
-            title: "Verify Fail",
+            title: "OTP Verification Failed",
             message: state.failMsg,
             onClose: () => Navigator.pop(context),
           );
         }
-        if (state is EmailVerifySuccess) {
-          Navigator.pushReplacementNamed(context, Routes.landingRoute);
+        if (state is OtpVerifySuccess) {
+          Navigator.pop(context);
+          DialogUtils.buildSuccessMessageDialog(
+            context,
+            title: "OTP Verification Success",
+            message: state.otpVerifyResponse.message,
+            onDone: () {
+              Navigator.pop(context);
+              if (widget.arg.fromPage == FromEmailVerifyEnum.forgotPassword) {
+                final ResetForgotPasswordArgs args = ResetForgotPasswordArgs(
+                  email: state.otpVerifyResponse.email,
+                  token: state.otpVerifyResponse.token ?? "",
+                );
+                Navigator.pushReplacementNamed(
+                  context,
+                  Routes.resetPasswordRoute,
+                  arguments: args,
+                );
+              } else {
+                Navigator.pushReplacementNamed(context, Routes.landingRoute);
+              }
+            },
+          );
         }
       },
       child: Scaffold(
@@ -105,7 +128,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
                       ))
                 ])),
               ),
-              BlocBuilder<EmailVerifyCubit, EmailVerifyState>(
+              BlocBuilder<OtpVerifyCubit, OtpVerifyState>(
                 builder: (context, state) {
                   return SizedBox(
                     width: double.infinity,
@@ -129,9 +152,20 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
                           setState(() {
                             pinErrorMsg = null;
                           });
-                          context
-                              .read<EmailVerifyCubit>()
-                              .activateAccount(pin, widget.arg.email);
+                          if (widget.arg.fromPage ==
+                              FromEmailVerifyEnum.forgotPassword) {
+                            context.read<OtpVerifyCubit>().verifyOtp(
+                                  pin,
+                                  widget.arg.email,
+                                  "/forget-password-verify-otp",
+                                );
+                          } else {
+                            context.read<OtpVerifyCubit>().verifyOtp(
+                                  pin,
+                                  widget.arg.email,
+                                  "/activate-account",
+                                );
+                          }
                         }
                       },
                       child: const Text("Verify"),

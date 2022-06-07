@@ -9,6 +9,11 @@ abstract class AuthRepository {
   Future<Either<CustomFailure, String>> register(
       RegisterRequest registerRequest);
 
-  Future<Either<CustomFailure, String>> activateAccount(
-      ActivateAccountRequest activateAccountRequest);
+  Future<Either<CustomFailure, OtpVerifyResponse>> verifyOtp(
+      OtpVerifyRequest activateAccountRequest);
+
+  Future<Either<CustomFailure, ForgotPasswordResponse>>
+      sendOtpForForgotPassword(String email);
+  Future<Either<CustomFailure, ForgotPasswordResponse>> resetForgotPassword(
+      ResetPasswordRequest resetPasswordRequest);
 }

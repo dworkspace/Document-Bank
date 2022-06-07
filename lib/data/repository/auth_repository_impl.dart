@@ -56,13 +56,51 @@ class AuthRepositoryImpl extends AuthRepository {
    * ACTIVATE ACCOUNT 
    */
   @override
-  Future<Either<CustomFailure, String>> activateAccount(
-      ActivateAccountRequest activateAccountRequest) async {
+  Future<Either<CustomFailure, OtpVerifyResponse>> verifyOtp(
+      OtpVerifyRequest activateAccountRequest) async {
     if (await _networkInfo.isConnected()) {
       try {
-        final String activateSuccessMsg =
-            await _remoteSource.activateAccount(activateAccountRequest);
-        return Right(activateSuccessMsg);
+        final OtpVerifyResponse response =
+            await _remoteSource.verifyOtp(activateAccountRequest);
+        return Right(response);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
+
+  /*
+   * RESET FORGOT PASSWORD 
+   */
+  @override
+  Future<Either<CustomFailure, ForgotPasswordResponse>> resetForgotPassword(
+      ResetPasswordRequest resetPasswordRequest) async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final ForgotPasswordResponse response =
+            await _remoteSource.resetPassword(resetPasswordRequest);
+        return Right(response);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
+
+  /*
+   * SEND OTP FOR FORGOT PASSWORD 
+   */
+  @override
+  Future<Either<CustomFailure, ForgotPasswordResponse>>
+      sendOtpForForgotPassword(String email) async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final ForgotPasswordResponse response =
+            await _remoteSource.forgotPassword(email);
+        return Right(response);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
       }

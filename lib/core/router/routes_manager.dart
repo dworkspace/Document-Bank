@@ -1,7 +1,10 @@
 import 'package:document_bank/core/di%20/app_module.dart';
+import 'package:document_bank/core/router/arguments/reset_forgot_password_args.dart';
 import 'package:document_bank/core/router/arguments/verify_email_arg.dart';
-import 'package:document_bank/presentation/auth/pages/email_confirm_page.dart';
+import 'package:document_bank/presentation/auth/pages/forgot_password/forgot_password_page.dart';
+import 'package:document_bank/presentation/auth/pages/forgot_password/reset_password_page.dart';
 import 'package:document_bank/presentation/auth/pages/login_page.dart';
+import 'package:document_bank/presentation/auth/pages/otp_verify_page.dart';
 import 'package:document_bank/presentation/auth/pages/register_page.dart';
 import 'package:document_bank/presentation/landing/pages/landing_page.dart';
 import 'package:document_bank/presentation/splash/splash_page.dart';
@@ -14,6 +17,7 @@ class Routes {
   static const String registerRoute = "/register";
   static const String emailVerifyRoute = "/emailVerify";
   static const String forgotPasswordRoute = "/forgotPassword";
+  static const String resetPasswordRoute = "/resetPassword";
   static const String landingRoute = "/landing";
   static const String mainRoute = "/main";
   static const String storeDetailsRoute = "/storeDetails";
@@ -31,12 +35,18 @@ class RouteGenerator {
         initRegisterModule();
         return MaterialPageRoute(builder: (_) => const RegisterPage());
       case Routes.emailVerifyRoute:
-        initEmailVerifyModule();
         return MaterialPageRoute(
-          builder: (_) => EmailConfirmPage(
+          builder: (_) => OtpVerifyPage(
             arg: routeSettings.arguments as VerifyEmailArg,
           ),
         );
+      case Routes.forgotPasswordRoute:
+        return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
+      case Routes.resetPasswordRoute:
+        return MaterialPageRoute(
+            builder: (_) => ResetPasswordPage(
+                  args: routeSettings.arguments as ResetForgotPasswordArgs,
+                ));
       case Routes.landingRoute:
         return MaterialPageRoute(builder: (_) => const LandingPage());
       default:

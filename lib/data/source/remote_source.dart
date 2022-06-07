@@ -6,11 +6,10 @@ import 'package:document_bank/data/response/auth_reponses.dart';
 abstract class RemoteSource {
   Future<LoginResponse> login(LoginRequest loginRequest);
   Future<String> register(RegisterRequest registerRequest);
-  Future<String> activateAccount(ActivateAccountRequest activateAccountRequest);
-  Future<String> forgotPassword(String email);
-  Future<String> verifyOtpForForgotPassword(
-      ActivateAccountRequest verifyOtpRequest);
-  
+  Future<OtpVerifyResponse> verifyOtp(OtpVerifyRequest otpVerifyRequest);
+  Future<ForgotPasswordResponse> forgotPassword(String email);
+  Future<ForgotPasswordResponse> resetPassword(
+      ResetPasswordRequest resetPasswordRequest);
 }
 
 class RemoteSourceImpl implements RemoteSource {
@@ -56,15 +55,14 @@ class RemoteSourceImpl implements RemoteSource {
  * ACTIVATE ACCOUNT 
  */
   @override
-  Future<String> activateAccount(
-      ActivateAccountRequest activateAccountRequest) async {
+  Future<OtpVerifyResponse> verifyOtp(OtpVerifyRequest otpVerifyRequest) async {
     try {
       final loginResponse = await dio.post(
-        "/activate-account",
-        data: activateAccountRequest.toMap(),
+        otpVerifyRequest.endURL,
+        data: otpVerifyRequest.toMap(),
       );
       final mapBody = loginResponse.data;
-      return mapBody['message'];
+      return OtpVerifyResponse.fromMap(mapBody);
     } on Exception catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -74,32 +72,32 @@ class RemoteSourceImpl implements RemoteSource {
  * FORGOT PASSWORD
  */
   @override
-  Future<String> forgotPassword(String email) async {
+  Future<ForgotPasswordResponse> forgotPassword(String email) async {
     try {
       final loginResponse = await dio.post(
         "/forget-password",
         data: {"email": email},
       );
       final mapBody = loginResponse.data;
-      return mapBody['message'];
+      return ForgotPasswordResponse.fromMap(mapBody);
     } on Exception catch (e) {
       throw ServerException(message: e.toString());
     }
   }
 
   /*
-   * VERIFY OTP FOR FORGOT PASSWORD 
+   *  RESET PASSWORD (FORGOT PASSWORD) 
    */
   @override
-  Future<String> verifyOtpForForgotPassword(
-      ActivateAccountRequest verifyOtpRequest) async {
+  Future<ForgotPasswordResponse> resetPassword(
+      ResetPasswordRequest resetPasswordRequest) async {
     try {
       final loginResponse = await dio.post(
-        "/forget-password-verify-otp",
-        data: verifyOtpRequest.toMap(),
+        "/reset-password",
+        data: resetPasswordRequest.toMap(),
       );
       final mapBody = loginResponse.data;
-      return mapBody['message'];
+      return ForgotPasswordResponse.fromMap(mapBody);
     } on Exception catch (e) {
       throw ServerException(message: e.toString());
     }

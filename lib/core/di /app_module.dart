@@ -2,12 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:document_bank/data/network/api_client.dart';
 import 'package:document_bank/data/source/remote_source.dart';
 import 'package:document_bank/domain/repository/auth_repository.dart';
-import 'package:document_bank/domain/usecase/activate_account_usecase.dart';
 import 'package:document_bank/domain/usecase/login_usecase.dart';
+import 'package:document_bank/domain/usecase/otp_verify_usecase.dart';
 import 'package:document_bank/domain/usecase/register_usecase.dart';
+import 'package:document_bank/domain/usecase/reset_forgot_password_use_case.dart';
+import 'package:document_bank/domain/usecase/send_otp_forgot_password_usecase.dart';
 import 'package:document_bank/presentation/auth/blocs/auth_bloc/auth_bloc.dart';
-import 'package:document_bank/presentation/auth/blocs/email_verify/email_verify_cubit.dart';
+import 'package:document_bank/presentation/auth/blocs/forgot_password/forgotpassword_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/login_bloc/login_bloc.dart';
+import 'package:document_bank/presentation/auth/blocs/otp_verify/otp_verify_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/register/register_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
@@ -51,6 +54,9 @@ Future<void> initAppModule() async {
 
   //blocs
   instance.registerLazySingleton<AuthBloc>(() => AuthBloc(instance()));
+
+  initForgotPasswordModule();
+  initEmailVerifyModule();
 }
 
 void initLoginModule() {
@@ -70,9 +76,22 @@ void initRegisterModule() {
 }
 
 void initEmailVerifyModule() {
-  if (!GetIt.I.isRegistered<ActivateAccountUseCase>()) {
-    instance.registerFactory(() => ActivateAccountUseCase(instance()));
-    instance
-        .registerFactory<EmailVerifyCubit>(() => EmailVerifyCubit(instance()));
+  if (!GetIt.I.isRegistered<OtpVerifyUseCase>()) {
+    instance.registerLazySingleton(() => OtpVerifyUseCase(instance()));
+    instance.registerLazySingleton<OtpVerifyCubit>(
+        () => OtpVerifyCubit(instance()));
+  }
+}
+
+void initForgotPasswordModule() {
+  if (!GetIt.I.isRegistered<ResetForgotPasswordUseCase>()) {
+    instance.registerLazySingleton<ResetForgotPasswordUseCase>(
+        () => ResetForgotPasswordUseCase(instance()));
+
+    instance.registerLazySingleton<SendOtpForgotPasswordUseCase>(
+        () => SendOtpForgotPasswordUseCase(instance()));
+
+    instance.registerLazySingleton<ForgotpasswordCubit>(
+        () => ForgotpasswordCubit(instance(), instance()));
   }
 }

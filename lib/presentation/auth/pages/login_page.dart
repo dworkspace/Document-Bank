@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         if (state is LoginLoading) {
           DialogUtils.buildLoadingDialog(context);
         } else if (state is LoginFailure) {
-          Navigator.pop(context);
+          Navigator.of(context, rootNavigator: true).pop();
           DialogUtils.buildErrorMessageDialog(
             context,
             title: "Login Failed",
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             },
           );
         } else if (state is LoginSuccess) {
-          Navigator.pop(context);
+          Navigator.of(context, rootNavigator: true).pop();
           SchedulerBinding.instance?.addPostFrameCallback((timestamp) {
             context.read<AuthBloc>().add(LoggedIn());
           });
@@ -239,11 +239,16 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "Forgot Password?",
-            style: getRegularStyle(
-              color: ColorManager.blackColor,
-              fontSize: FontSize.s16,
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, Routes.forgotPasswordRoute);
+            },
+            child: Text(
+              "Forgot Password?",
+              style: getRegularStyle(
+                color: ColorManager.blackColor,
+                fontSize: FontSize.s16,
+              ),
             ),
           ),
           Text(

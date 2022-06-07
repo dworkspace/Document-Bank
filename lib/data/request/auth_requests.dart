@@ -37,12 +37,14 @@ class RegisterRequest {
   }
 }
 
-class ActivateAccountRequest {
+class OtpVerifyRequest {
   final String email;
   final String otp;
-  ActivateAccountRequest({
+  final String endURL;
+  OtpVerifyRequest({
     required this.email,
     required this.otp,
+    this.endURL = "/activate-account",
   });
 
   Map<String, dynamic> toMap() {
@@ -57,17 +59,20 @@ class ResetPasswordRequest {
   final String email;
   final String password;
   final String confirmPassword;
+  final String token;
   ResetPasswordRequest({
     required this.email,
     required this.password,
     required this.confirmPassword,
+    required this.token,
   });
 
   Map<String, dynamic> toMap() {
     return {
       "email": email,
       "password": password,
-      "password_confirmation": confirmPassword
+      "password_confirmation": confirmPassword,
+      "token": token
     };
   }
 }

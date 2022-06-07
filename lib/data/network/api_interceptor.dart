@@ -28,6 +28,8 @@ class AppInterceptors extends Interceptor {
             throw UnauthorizedException(err.requestOptions, err.response);
           case 404:
             throw NotFoundException(err.requestOptions);
+          case 422:
+            throw UnprocessableException(err.requestOptions, err.response);
           case 409:
             throw ConflictException(err.requestOptions);
           case 500:
@@ -91,7 +93,7 @@ class UnauthorizedException extends DioError {
   @override
   String toString() {
     if (requestOptions.path == "/register-user") {
-      final Map<String, dynamic> msgMap = response?.data['message'];
+      final Map<String, dynamic> msgMap = response?.data['errors'];
       String errorMessage = "";
       msgMap.forEach((key, value) {
         final _value = value;
@@ -102,6 +104,26 @@ class UnauthorizedException extends DioError {
       return errorMessage;
     }
     return response?.data['message'] ?? 'Access denied';
+  }
+}
+
+class UnprocessableException extends DioError {
+  UnprocessableException(RequestOptions r, Response? response)
+      : super(requestOptions: r, response: response);
+
+  @override
+  String toString() {
+    final Map<String, dynamic> msgMap = response?.data['errors'];
+    String errorMessage = "";
+    msgMap.forEach((key, value) {
+      final _value = value;
+      for (var element in _value) {
+        errorMessage = errorMessage + " " + element;
+      }
+    });
+    return errorMessage;
+
+    // return response?.data['message'] ?? 'Access denied';
   }
 }
 
