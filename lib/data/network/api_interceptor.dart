@@ -1,14 +1,25 @@
 import 'package:dio/dio.dart';
 
+import '../../core/di /app_module.dart';
+import '../../core/utils/app_prefs.dart';
+
 class AppInterceptors extends Interceptor {
   final Dio dio;
+
   AppInterceptors({
     required this.dio,
   });
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    super.onRequest(options, handler);
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final _appPrefs = instance<AppPreferences>();
+    final String? token = await _appPrefs.getAccessToken();
+    if (token == null) {
+      return super.onRequest(options, handler);
+    }
+    options.headers["Authorization"] = "Bearer $token";
+    return super.onRequest(options, handler);
   }
 
   @override

@@ -10,6 +10,10 @@ class ColorManager {
   static Color gray = HexColor.fromHex("#BEBEBF");
   static Color darkBlue = HexColor.fromHex("#011F5F");
   static Color primaryBloodColor = HexColor.fromHex("#993E15");
+  static Color purple = HexColor.fromHex('#5D2DFF');
+  static Color redColor = HexColor.fromHex("#F83F3F");
+  static Color greenColor = HexColor.fromHex("#14BC52");
+  static Color pinkColor = HexColor.fromHex("#F22DDE");
 }
 
 extension HexColor on Color {

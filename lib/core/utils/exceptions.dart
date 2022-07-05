@@ -18,3 +18,7 @@ class ServerException extends CustomException {
 class CacheException extends CustomException {
   CacheException({required String message}) : super(message: message);
 }
+
+class LocalException extends CustomException {
+  LocalException({required String message}) : super(message: message);
+}

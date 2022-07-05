@@ -34,6 +34,27 @@ ThemeData getApplicationTheme() {
         fontSize: FontSize.s16,
       ),
     ),
+    //bottomAppbarTheme
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: ColorManager.whiteColor,
+      selectedItemColor: ColorManager.blackColor,
+      type: BottomNavigationBarType.fixed,
+      unselectedItemColor: ColorManager.grayColor,
+      showUnselectedLabels: true,
+      selectedLabelStyle: getMediumStyle(
+        color: ColorManager.gray,
+      ),
+      unselectedLabelStyle: getRegularStyle(
+        color: ColorManager.gray,
+      ),
+      selectedIconTheme: IconThemeData(
+        color: ColorManager.blackColor,
+      ),
+      unselectedIconTheme: IconThemeData(
+        color: ColorManager.grayColor,
+      ),
+    ),
+
     //elevated theme
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

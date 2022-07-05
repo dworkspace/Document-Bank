@@ -23,3 +23,7 @@ class NoInternetFailure extends CustomFailure {
 class CacheFailure extends CustomFailure {
   const CacheFailure({required String message}) : super(message: message);
 }
+
+class LocalFailure extends CustomFailure {
+  const LocalFailure({required String message}) : super(message: message);
+}

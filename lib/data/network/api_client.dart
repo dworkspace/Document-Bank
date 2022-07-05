@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:document_bank/core/utils/constants.dart';
 
+import '../../core/di /app_module.dart';
+import '../../core/utils/app_prefs.dart';
 import 'api_interceptor.dart';
 
 class ApiClient {

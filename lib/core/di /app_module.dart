@@ -1,23 +1,50 @@
 import 'package:dio/dio.dart';
+import 'package:document_bank/core/blocs/folder_cubit.dart';
 import 'package:document_bank/data/network/api_client.dart';
+import 'package:document_bank/data/repository/common_repository_impl.dart';
+import 'package:document_bank/data/repository/document_repository_impl.dart';
+import 'package:document_bank/data/repository/goal_repository_impl.dart';
+import 'package:document_bank/data/repository/memo_repository_impl.dart';
+import 'package:document_bank/data/source/local_source.dart';
 import 'package:document_bank/data/source/remote_source.dart';
 import 'package:document_bank/domain/repository/auth_repository.dart';
+import 'package:document_bank/domain/repository/common_repository.dart';
+import 'package:document_bank/domain/repository/document_repository.dart';
+import 'package:document_bank/domain/repository/goal_repository.dart';
+import 'package:document_bank/domain/repository/memo_repository.dart';
+import 'package:document_bank/domain/repository/note_repository.dart';
+import 'package:document_bank/domain/usecase/add_note_usecase.dart';
+import 'package:document_bank/domain/usecase/create_goal_usecase.dart';
+import 'package:document_bank/domain/usecase/create_memo_usecase.dart';
+import 'package:document_bank/domain/usecase/fetch_contacts_usecase.dart';
+import 'package:document_bank/domain/usecase/get_all_notes_usecase.dart';
+import 'package:document_bank/domain/usecase/get_memos_usecase.dart';
+import 'package:document_bank/domain/usecase/get_todo_goals_usecase.dart';
 import 'package:document_bank/domain/usecase/login_usecase.dart';
 import 'package:document_bank/domain/usecase/otp_verify_usecase.dart';
 import 'package:document_bank/domain/usecase/register_usecase.dart';
 import 'package:document_bank/domain/usecase/reset_forgot_password_use_case.dart';
 import 'package:document_bank/domain/usecase/send_otp_forgot_password_usecase.dart';
+import 'package:document_bank/domain/usecase/store_documents_usecase.dart';
+import 'package:document_bank/presentation/add_document/blocs/add_documents/add_documents_bloc.dart';
 import 'package:document_bank/presentation/auth/blocs/auth_bloc/auth_bloc.dart';
 import 'package:document_bank/presentation/auth/blocs/forgot_password/forgotpassword_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/login_bloc/login_bloc.dart';
 import 'package:document_bank/presentation/auth/blocs/otp_verify/otp_verify_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/register/register_bloc.dart';
+import 'package:document_bank/presentation/contacts/blocs/contact/contact_bloc.dart';
+import 'package:document_bank/presentation/goal/blocs/goal_bloc.dart';
+import 'package:document_bank/presentation/landing/blocs/landing/landing_cubit.dart';
+import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
+import 'package:document_bank/presentation/reminder/blocs/set_reminder/set_reminder_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/network/network_info.dart';
 import '../../data/repository/auth_repository_impl.dart';
+import '../../data/repository/note_repository_impl.dart';
+import '../../domain/usecase/get_all_folders_usecase.dart';
 import '../utils/app_prefs.dart';
 
 final instance = GetIt.instance;
@@ -47,16 +74,34 @@ Future<void> initAppModule() async {
   //data source
   instance
       .registerLazySingleton<RemoteSource>(() => RemoteSourceImpl(instance()));
+  instance.registerLazySingleton<LocalSource>(() => LocalSourceImpl());
 
   //repositories
   instance.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(instance(), instance()));
+  instance.registerLazySingleton<CommonRepository>(
+      () => CommonRepositoryImpl(instance()));
+  instance.registerLazySingleton<GoalRepository>(
+      () => GoalRepositoryImpl(instance(), instance()));
+  instance.registerLazySingleton<MemoRepository>(
+      () => MemoRepositoryImpl(instance(), instance()));
+  instance.registerLazySingleton<DocumentRepository>(
+      () => DocumentRepositoryImpl(instance(), instance()));
+  instance.registerLazySingleton<NoteRepository>(
+      () => NoteRepositoryImpl(instance(), instance()));
 
   //blocs
   instance.registerLazySingleton<AuthBloc>(() => AuthBloc(instance()));
+  instance.registerLazySingleton<FolderCubit>(() => FolderCubit(instance()));
+
+  //common usecase
+  instance.registerLazySingleton<GetAllFoldersUseCase>(
+      () => GetAllFoldersUseCase(instance()));
 
   initForgotPasswordModule();
   initEmailVerifyModule();
+  initLandingModule();
+  initNoteModule();
 }
 
 void initLoginModule() {
@@ -93,5 +138,64 @@ void initForgotPasswordModule() {
 
     instance.registerLazySingleton<ForgotpasswordCubit>(
         () => ForgotpasswordCubit(instance(), instance()));
+  }
+}
+
+void initLandingModule() {
+  if (!GetIt.I.isRegistered<LandingCubit>()) {
+    instance.registerLazySingleton<LandingCubit>(() => LandingCubit());
+  }
+}
+
+void initContactsModule() {
+  if (!GetIt.I.isRegistered<FetchContactsUseCase>()) {
+    instance.registerFactory<FetchContactsUseCase>(
+        () => FetchContactsUseCase(instance()));
+    instance.registerFactory<ContactBloc>(() => ContactBloc(instance()));
+  }
+}
+
+void initGoalModule() {
+  if (!GetIt.I.isRegistered<CreateGoalUseCase>()) {
+    instance.registerFactory<CreateGoalUseCase>(
+        () => CreateGoalUseCase(instance()));
+    instance.registerFactory<GetTodoGoalsUseCase>(
+        () => GetTodoGoalsUseCase(instance()));
+    instance.registerFactory<GoalBloc>(() => GoalBloc(instance(), instance()));
+  }
+}
+
+void initMemoModule() {
+  if (!GetIt.I.isRegistered<GetMemosUseCase>()) {
+    instance
+        .registerFactory<GetMemosUseCase>(() => GetMemosUseCase(instance()));
+    instance.registerFactory<CreateMemoUseCase>(
+        () => CreateMemoUseCase(instance()));
+  }
+}
+
+void initAddDocumentsModule() {
+  if (!GetIt.I.isRegistered<AddDocumentsBloc>()) {
+    instance.registerFactory<AddDocumentsBloc>(
+        () => AddDocumentsBloc(instance(), instance()));
+    instance.registerFactory<StoreDocumentsUseCase>(
+        () => StoreDocumentsUseCase(instance()));
+  }
+}
+
+void initReminderModule() {
+  if (!GetIt.I.isRegistered<SetReminderCubit>()) {
+    instance.registerFactory<SetReminderCubit>(() => SetReminderCubit());
+  }
+}
+
+void initNoteModule() {
+  if (!GetIt.I.isRegistered<GetAllNotesUseCase>()) {
+    instance.registerLazySingleton<GetAllNotesUseCase>(
+        () => GetAllNotesUseCase(instance()));
+    instance.registerLazySingleton<AddNoteUseCase>(
+        () => AddNoteUseCase(instance()));
+    instance.registerLazySingleton<NotesCubit>(
+        () => NotesCubit(instance(), instance()));
   }
 }

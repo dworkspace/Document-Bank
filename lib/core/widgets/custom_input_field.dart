@@ -15,6 +15,8 @@ class CustomInputField extends StatelessWidget {
     this.suffixIcon,
     this.autoValidateMode,
     this.controller,
+    this.maxLines = 1,
+    this.readOnly = false,
   }) : super(key: key);
 
   final String? hintText;
@@ -25,6 +27,8 @@ class CustomInputField extends StatelessWidget {
   final String? Function(String?)? validator;
   final AutovalidateMode? autoValidateMode;
   final TextEditingController? controller;
+  final int maxLines;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +48,10 @@ class CustomInputField extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: TextFormField(
+            readOnly: readOnly,
             controller: controller,
             obscureText: isObSecure,
+            maxLines: maxLines,
             keyboardType: inputType,
             validator: validator,
             autovalidateMode: autoValidateMode,

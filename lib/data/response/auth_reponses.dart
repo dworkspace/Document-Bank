@@ -1,19 +1,27 @@
+import 'package:document_bank/domain/model/user.dart';
+
 class LoginResponse {
   final String message;
   final String accessToken;
   final String tokenType;
+  final int expiresIn;
+  final User user;
 
   LoginResponse({
     required this.message,
     required this.accessToken,
     required this.tokenType,
+    required this.expiresIn,
+    required this.user,
   });
 
   factory LoginResponse.fromLoginResponse(Map<String, dynamic> map) {
     return LoginResponse(
-      message: map['message'],
-      accessToken: map["access_token"],
-      tokenType: map["token_type"],
+      message: map['message']??"",
+      accessToken: map["access_token"] ?? "",
+      tokenType: map["token_type"] ?? "",
+      expiresIn: map["expires_in"]?.toInt() ?? 0,
+      user: User.fromMap(map['user']),
     );
   }
 }
@@ -22,6 +30,7 @@ class ForgotPasswordResponse {
   final String email;
   final String message;
   final String? token;
+
   ForgotPasswordResponse({
     required this.email,
     required this.message,
@@ -41,6 +50,7 @@ class OtpVerifyResponse {
   final String email;
   final String message;
   final String? token;
+
   OtpVerifyResponse({
     required this.email,
     required this.message,

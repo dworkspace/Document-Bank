@@ -8,12 +8,15 @@ import 'package:document_bank/presentation/auth/blocs/forgot_password/forgotpass
 import 'package:document_bank/presentation/auth/blocs/login_bloc/login_bloc.dart';
 import 'package:document_bank/presentation/auth/blocs/otp_verify/otp_verify_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/register/register_bloc.dart';
+import 'package:document_bank/presentation/landing/blocs/landing/landing_cubit.dart';
+import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'core/blocs/folder_cubit.dart';
 import 'core/di /app_module.dart';
 
 void main() {
@@ -56,6 +59,9 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (_) => instance<RegisterBloc>()),
             BlocProvider(create: (_) => instance<OtpVerifyCubit>()),
             BlocProvider(create: (_) => instance<ForgotpasswordCubit>()),
+            BlocProvider(create: (_) => instance<LandingCubit>()),
+            BlocProvider(create: (_) => instance<FolderCubit>()),
+            BlocProvider(create: (_) => instance<NotesCubit>()),
           ],
           child: MaterialApp(
             navigatorKey: _navigatorKey,
@@ -76,6 +82,7 @@ class _MyAppState extends State<MyApp> {
                     case AuthStatus.unauthenticated:
                       _navigator.pushNamedAndRemoveUntil<void>(
                         Routes.loginRoute,
+                        // Routes.landingRoute,
                         (route) => false,
                       );
 

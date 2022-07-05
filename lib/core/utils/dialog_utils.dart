@@ -1,4 +1,5 @@
 import 'package:document_bank/core/resources/color_manager.dart';
+import 'package:document_bank/core/resources/styles_manager.dart';
 import 'package:flutter/material.dart';
 
 class DialogUtils {
@@ -180,5 +181,107 @@ class DialogUtils {
         );
       },
     );
+  }
+
+  static void buildSetReminderDialog({
+    required BuildContext context,
+    VoidCallback? onNoClick,
+    VoidCallback? onYesClick,
+  }) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Do you want to set reminder?",
+                    textAlign: TextAlign.center,
+                    style: getSemiBoldStyle(
+                        color: ColorManager.blackColor, fontSize: 18.0),
+                  ),
+                  Text(
+                    "You need to set reminder to get remind on future. Please set reminder if you wish in future",
+                    textAlign: TextAlign.center,
+                    style: getRegularStyle(
+                      color: ColorManager.blackColor,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: onNoClick,
+                          child: Container(
+                            width: 80.0,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: ColorManager.redColor,
+                            ),
+                            child: Text(
+                              "No",
+                              style: getMediumStyle(
+                                color: ColorManager.whiteColor,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: onYesClick,
+                          child: Container(
+                            width: 80.0,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: ColorManager.primaryYellow,
+                            ),
+                            child: Text(
+                              "Yes",
+                              style: getMediumStyle(
+                                color: ColorManager.whiteColor,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  static Future<DateTime?> inputDateFromUser(BuildContext context) async {
+    DateTime? _pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015),
+      lastDate: DateTime(2023),
+    );
+    return _pickedDate;
+  }
+
+  static Future<TimeOfDay?> inputTimeFromUser(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialEntryMode: TimePickerEntryMode.dial,
+      initialTime: TimeOfDay.now(),
+    );
+    return pickedTime;
   }
 }

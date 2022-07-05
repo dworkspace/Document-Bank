@@ -16,4 +16,8 @@ class AppPreferences {
   Future<void> saveAccessToken(String accessToken) async {
     _sharedPreferences.setString(AppConstants.accessToken, accessToken);
   }
+
+  Future<void> cleanPreference() async {
+    await _sharedPreferences.clear();
+  }
 }

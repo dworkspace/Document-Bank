@@ -3,6 +3,7 @@ import 'package:document_bank/core/utils/app_prefs.dart';
 import 'package:equatable/equatable.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -28,7 +29,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthState.authenticated());
   }
 
-  void _onLoggedOut(LoggedOut event, Emitter<AuthState> emit) async {}
+  void _onLoggedOut(LoggedOut event, Emitter<AuthState> emit) async {
+    await _appPreference.cleanPreference();
+    emit(const AuthState.unauthenticated());
+  }
 
   final AppPreferences _appPreference;
 }
