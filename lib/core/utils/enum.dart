@@ -20,3 +20,5 @@ extension ReminderRecurringStringX on ReminderRecurringEnum {
     }
   }
 }
+
+enum ReminderOnEnum { photo, note }

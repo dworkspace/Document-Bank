@@ -42,7 +42,11 @@ class NotesCubit extends Cubit<NotesState> {
             addNoteErrorMsg: fail.message),
       ),
       (data) => emit(
-        state.copyWith(addNoteStatus: StateStatusEnum.success, notes: data),
+        state.copyWith(
+          addNoteStatus: StateStatusEnum.success,
+          status: StateStatusEnum.success,
+          notes: data,
+        ),
       ),
     );
   }

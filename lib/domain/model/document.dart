@@ -1,21 +1,27 @@
 import 'package:document_bank/data/response/document_responses.dart';
 
 class Document {
-  final String document;
   final int id;
-  final int categoryId;
+  final String photo;
+  final String folder;
+  final String createdDate;
+  final String createdTime;
 
   Document({
-    required this.document,
-    required this.categoryId,
     required this.id,
+    required this.photo,
+    required this.folder,
+    required this.createdDate,
+    required this.createdTime,
   });
 
-  factory Document.fromDocumentResponse(DocumentResponse documentResponse) {
+  factory Document.fromDocumentResponse(DocumentResponse response) {
     return Document(
-      document: documentResponse.document,
-      categoryId: documentResponse.categoryId,
-      id: documentResponse.id,
+      id: response.id,
+      photo: response.photo,
+      folder: response.folder,
+      createdDate: response.createdDate,
+      createdTime: response.createdTime,
     );
   }
 }

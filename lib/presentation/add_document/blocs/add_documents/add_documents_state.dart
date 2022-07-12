@@ -22,7 +22,7 @@ class AddDocumentsState {
   final AddDocumentsStatus status;
   final List<File> pickedDocFiles;
   final bool isSelectFolder;
-  final List<Document> documents;
+  final List<AddDocument> documents;
   final String errorMessage;
 
   AddDocumentsState copyWith({
@@ -30,7 +30,7 @@ class AddDocumentsState {
     bool? isSelectFolder,
     AddDocumentsStatus? status,
     String? errorMsg,
-    List<Document>? documents,
+    List<AddDocument>? documents,
   }) {
     return AddDocumentsState(
       pickedDocFiles: pickedDocFiles ?? this.pickedDocFiles,

@@ -137,16 +137,16 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: const [
-                Expanded(child: DocFolder()),
-                SizedBox(width: 16.0),
-                Expanded(child: DocFolder())
-              ],
-            ),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Row(
+          //     children: const [
+          //       Expanded(child: DocFolder()),
+          //       SizedBox(width: 16.0),
+          //       Expanded(child: DocFolder())
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );

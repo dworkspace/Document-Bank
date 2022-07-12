@@ -40,7 +40,7 @@ class AppInterceptors extends Interceptor {
           case 404:
             throw NotFoundException(err.requestOptions);
           case 422:
-            throw UnprocessableException(err.requestOptions, err.response);
+            throw UnProcessableException(err.requestOptions, err.response);
           case 409:
             throw ConflictException(err.requestOptions);
           case 500:
@@ -62,6 +62,9 @@ class AppInterceptors extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    if (response.statusCode == 403) {
+      
+    }
     super.onResponse(response, handler);
   }
 }
@@ -118,8 +121,8 @@ class UnauthorizedException extends DioError {
   }
 }
 
-class UnprocessableException extends DioError {
-  UnprocessableException(RequestOptions r, Response? response)
+class UnProcessableException extends DioError {
+  UnProcessableException(RequestOptions r, Response? response)
       : super(requestOptions: r, response: response);
 
   @override

@@ -10,41 +10,30 @@ extension SetReminderStateX on StateStatusEnum {
 
 class SetReminderState {
   final bool isRecurringChecked;
-
-  final String? title;
-  final String? selectedDate;
-  final String? selectedTime;
-  final String? recurringDate;
-  final String? recurringText;
-  final bool isFormValid;
+  final StateStatusEnum status;
+  final String addReminderSuccessMsg;
+  final String addReminderFailMessage;
 
   SetReminderState({
     this.isRecurringChecked = false,
-    this.title,
-    this.recurringDate,
-    this.recurringText,
-    this.selectedDate,
-    this.selectedTime,
-    this.isFormValid = false,
+    this.status = StateStatusEnum.initial,
+    this.addReminderFailMessage = "",
+    this.addReminderSuccessMsg = "",
   });
 
   SetReminderState copyWith({
     bool? isRecurringChecked,
-    String? title,
-    String? selectedDate,
-    String? selectedTime,
-    String? recurringDate,
-    bool? isFormValid,
-    String? recurringText,
+    StateStatusEnum? status,
+    String? addReminderSuccessMsg,
+    String? addReminderFailMessage,
   }) {
     return SetReminderState(
       isRecurringChecked: isRecurringChecked ?? this.isRecurringChecked,
-      title: title ?? this.title,
-      selectedDate: selectedDate ?? this.selectedDate,
-      selectedTime: selectedTime ?? this.selectedTime,
-      recurringDate: recurringDate ?? this.recurringDate,
-      recurringText: recurringText ?? this.recurringText,
-      isFormValid: isFormValid ?? this.isFormValid,
+      status: status ?? StateStatusEnum.initial,
+      addReminderFailMessage:
+          addReminderFailMessage ?? this.addReminderFailMessage,
+      addReminderSuccessMsg:
+          addReminderSuccessMsg ?? this.addReminderSuccessMsg,
     );
   }
 }

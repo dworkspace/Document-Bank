@@ -119,16 +119,16 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         GridView.builder(
-          itemCount: 4,
+          itemCount: 6,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 8.0,
-            crossAxisSpacing: 10.0,
-          ),
+              crossAxisCount: 2,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 10.0,
+              childAspectRatio: 1.5),
           itemBuilder: (context, index) {
-            final CardContent cardContent = index.getCardContent();
+            final CardContent cardContent = index.getCardContent(context);
             return Card(
               elevation: 8.0,
               margin: const EdgeInsets.all(12.0),
@@ -137,6 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: _cardWidget(
                   file: cardContent.iconImage,
                   title: cardContent.title,
+                  onTap: cardContent.onTap,
                 ),
               ),
             );
@@ -146,40 +147,87 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _cardWidget({required String file, required String title}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          file,
-          height: 60,
-          width: 60,
+  Widget _cardWidget(
+      {required String file, required String title, VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              file,
+              height: 30,
+              width: 30,
+              fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: getRegularStyle(
+                  color: ColorManager.blackColor,
+                  fontSize: 14.0,
+                ),
+              ),
+            )
+          ],
         ),
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: getRegularStyle(
-            color: ColorManager.blackColor,
-            fontSize: 18.0,
-          ),
-        )
-      ],
+      ),
     );
   }
 }
 
 extension CardContentX on int {
-  CardContent getCardContent() {
+  CardContent getCardContent(context) {
     if (this == 0) {
       return CardContent(
-          title: "Documents Folder", iconImage: IconAssets.fileImg);
+          title: "My Reminders",
+          iconImage: IconAssets.calenderImg,
+          onTap: () {
+            Navigator.pushNamed(context, Routes.myRemindersRoute);
+          });
     } else if (this == 1) {
-      return CardContent(title: "Memos", iconImage: IconAssets.memoImg);
+      return CardContent(
+        title: "Terms Conditions",
+        iconImage: IconAssets.paperImg,
+        onTap: () {
+          Navigator.pushNamed(context, Routes.termsConditionRoute);
+        },
+      );
     } else if (this == 2) {
-      return CardContent(title: "Goals", iconImage: IconAssets.userMenu);
+      return CardContent(
+        title: "Privacy Policy",
+        iconImage: IconAssets.keyLockImg,
+        onTap: () {
+          Navigator.pushNamed(context, Routes.privacyPolicyRoute);
+        },
+      );
     } else if (this == 3) {
       return CardContent(
-          title: "Auto saved contacts", iconImage: IconAssets.contactImg);
+        title: "About Us",
+        iconImage: IconAssets.aboutUsImg,
+        onTap: () {
+          Navigator.pushNamed(context, Routes.aboutUsRoute);
+        },
+      );
+    } else if (this == 4) {
+      return CardContent(
+        title: "Help and Support",
+        iconImage: IconAssets.personCheckImg,
+        onTap: () {
+          Navigator.pushNamed(context, Routes.helpSupportRoute);
+        },
+      );
+    } else if (this == 5) {
+      return CardContent(
+        title: "Change Password",
+        iconImage: IconAssets.eyeImg,
+        onTap: () {
+          Navigator.pushNamed(context, Routes.changePasswordRoute);
+        },
+      );
     } else {
       return CardContent(
           title: "Documents Folder", iconImage: IconAssets.fileImg);
@@ -190,6 +238,11 @@ extension CardContentX on int {
 class CardContent {
   final String title;
   final String iconImage;
+  final VoidCallback? onTap;
 
-  CardContent({required this.title, required this.iconImage});
+  CardContent({
+    required this.title,
+    required this.iconImage,
+    this.onTap,
+  });
 }

@@ -47,4 +47,36 @@ class GoalRepositoryImpl extends GoalRepository {
       return const Left(NoInternetFailure());
     }
   }
+
+  @override
+  Future<Either<CustomFailure, String>> deleteAllGoals() async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final String response = await _remoteSource.deleteAllGoals();
+
+        return Right(response);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
+
+  @override
+  Future<Either<CustomFailure, List<TodoGoal>>> completeGoal(int goalId) async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final List<TodoGoalResponse> response =
+            await _remoteSource.completeGoal(goalId);
+        final List<TodoGoal> goals =
+            List<TodoGoal>.from(response.map((e) => e.toTodoGoal())).toList();
+        return Right(goals);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
 }

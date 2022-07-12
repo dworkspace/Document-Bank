@@ -17,19 +17,19 @@ class NoteRepositoryImpl extends NoteRepository {
 
   @override
   Future<Either<CustomFailure, List<Note>>> getAllNotes() async {
-    if (await _networkInfo.isConnected()) {
-      try {
-        final List<NoteResponse> response = await _remoteSource.getAllNotes();
-        final List<Note> notes =
-            List<Note>.from(response.map((e) => Note.fromNoteResponse(e)))
-                .toList();
-        return Right(notes);
-      } on ServerException catch (e) {
-        return Left(ServerFailure(message: e.message));
+      if (await _networkInfo.isConnected()) {
+        try {
+          final List<NoteResponse> response = await _remoteSource.getAllNotes();
+          final List<Note> notes =
+              List<Note>.from(response.map((e) => Note.fromNoteResponse(e)))
+                  .toList();
+          return Right(notes);
+        } on ServerException catch (e) {
+          return Left(ServerFailure(message: e.message));
+        }
+      } else {
+        return const Left(NoInternetFailure());
       }
-    } else {
-      return const Left(NoInternetFailure());
-    }
   }
 
   @override

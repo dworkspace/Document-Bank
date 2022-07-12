@@ -1,13 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:document_bank/core/utils/enum.dart';
 import 'package:document_bank/core/utils/exceptions.dart';
 import 'package:document_bank/data/request/auth_requests.dart';
 import 'package:document_bank/data/request/document_requests.dart';
 import 'package:document_bank/data/request/memo_requests.dart';
 import 'package:document_bank/data/request/note_requests.dart';
+import 'package:document_bank/data/request/reminder_requests.dart';
 import 'package:document_bank/data/response/auth_reponses.dart';
 import 'package:document_bank/data/response/document_responses.dart';
 import 'package:document_bank/data/response/memo_responses.dart';
 import 'package:document_bank/data/response/note_responses.dart';
+import 'package:document_bank/data/response/reminder_responses.dart';
 
 import '../response/goal_responses.dart';
 
@@ -27,18 +30,32 @@ abstract class RemoteSource {
 
   Future<List<TodoGoalResponse>> getTodoGoals();
 
+  Future<List<TodoGoalResponse>> completeGoal(int goalId);
+
+  Future<String> deleteAllGoals();
+
   Future<List<MemoResponse>> getImportantMemos();
 
   Future<List<MemoResponse>> createMemo(CreateMemoRequest memoRequest);
 
   Future<List<FolderResponse>> getAllFolders();
 
-  Future<List<DocumentResponse>> addDocuments(
+  Future<List<AddDocumentResponse>> addDocuments(
       AddDocumentsRequest addDocumentsRequest);
+
+  Future<List<DocumentResponse>> getAllDocuments();
+
+  Future<List<DocumentResponse>> getDocumentsOfFolder(int folderId);
 
   Future<List<NoteResponse>> getAllNotes();
 
   Future<List<NoteResponse>> saveNote(AddNoteRequest addNoteRequest);
+
+  Future<String> addReminder(SetReminderRequest reminderRequest);
+
+  Future<List<ReminderResponse>> getReminders();
+
+  Future<String> deleteReminder(int id);
 }
 
 class RemoteSourceImpl implements RemoteSource {
@@ -223,31 +240,29 @@ class RemoteSourceImpl implements RemoteSource {
   }
 
   @override
-  Future<List<DocumentResponse>> addDocuments(
+  Future<List<AddDocumentResponse>> addDocuments(
       AddDocumentsRequest addDocumentsRequest) async {
     try {
       List<MultipartFile> files = [];
 
-      Map<String, dynamic> mapData = {};
+      Map<String, dynamic> mapData = {
+        "folder": addDocumentsRequest.folderName,
+      };
+
+      var formData = FormData.fromMap(mapData);
 
       for (var path in addDocumentsRequest.paths) {
-        files.add(await MultipartFile.fromFile(path));
+        formData.files.addAll(
+            [MapEntry("document[]", await MultipartFile.fromFile(path))]);
       }
-
-      for (var element in files) {
-        mapData["document[]"] = element;
-      }
-
-      mapData['folder'] = addDocumentsRequest.folderName;
-      var formData = FormData.fromMap(mapData);
 
       final storeDocumentsResponse =
           await dio.post("/store-document", data: formData);
       final mapBody = storeDocumentsResponse.data;
       final List<Map<String, dynamic>> _list =
           List<Map<String, dynamic>>.from(mapBody['data']);
-      return List<DocumentResponse>.from(
-          _list.map((e) => DocumentResponse.fromMap(e))).toList();
+      return List<AddDocumentResponse>.from(
+          _list.map((e) => AddDocumentResponse.fromMap(e))).toList();
     } on Exception catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -277,6 +292,99 @@ class RemoteSourceImpl implements RemoteSource {
           List<Map<String, dynamic>>.from(mapBody['data']);
       return List<NoteResponse>.from(_list.map((e) => NoteResponse.fromMap(e)))
           .toList();
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<DocumentResponse>> getAllDocuments() async {
+    try {
+      final response = await dio.get("/all-documents");
+      final mapBody = response.data;
+      final List<Map<String, dynamic>> _list =
+          List<Map<String, dynamic>>.from(mapBody['data']);
+      return List<DocumentResponse>.from(
+          _list.map((e) => DocumentResponse.fromMap(e))).toList();
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<DocumentResponse>> getDocumentsOfFolder(int folderId) async {
+    try {
+      final response = await dio.get("/all-documents/$folderId");
+      final mapBody = response.data;
+      final List<Map<String, dynamic>> _list =
+          List<Map<String, dynamic>>.from(mapBody['data']);
+      return List<DocumentResponse>.from(
+          _list.map((e) => DocumentResponse.fromMap(e))).toList();
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<String> addReminder(SetReminderRequest reminderRequest) async {
+    try {
+      final url = reminderRequest.reminderOn == ReminderOnEnum.note
+          ? "/remainder-memo"
+          : "/remainder-photo";
+      final response = await dio.post(url, data: reminderRequest.toMap());
+      final mapBody = response.data;
+      return mapBody['message'];
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<ReminderResponse>> getReminders() async {
+    try {
+      final response = await dio.get("/remainder-memo");
+      final mapBody = response.data;
+      final List<Map<String, dynamic>> _list =
+          List<Map<String, dynamic>>.from(mapBody['data']);
+      return List<ReminderResponse>.from(
+          _list.map((e) => ReminderResponse.fromJson(e))).toList();
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<String> deleteReminder(int id) async {
+    try {
+      final response = await dio.delete("/remainder-memo/$id");
+      final mapBody = response.data;
+      return mapBody['message'];
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<String> deleteAllGoals() async {
+    try {
+      final response = await dio.post("/goal-delete");
+      final mapBody = response.data;
+      return mapBody['message'][0];
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<TodoGoalResponse>> completeGoal(int goalId) async {
+    try {
+      final loginResponse =
+          await dio.post("/goal-complete", data: {"id": goalId});
+      final mapBody = loginResponse.data;
+      final List<Map<String, dynamic>> _list =
+          List<Map<String, dynamic>>.from(mapBody['data']);
+      return List<TodoGoalResponse>.from(
+          _list.map((e) => TodoGoalResponse.fromMap(e))).toList();
     } on Exception catch (e) {
       throw ServerException(message: e.toString());
     }

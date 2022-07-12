@@ -1,10 +1,13 @@
 import 'package:document_bank/core/resources/color_manager.dart';
 import 'package:document_bank/core/resources/styles_manager.dart';
+import 'package:document_bank/core/router/arguments/set_reminder_arg.dart';
 import 'package:document_bank/core/utils/dialog_utils.dart';
+import 'package:document_bank/core/utils/enum.dart';
 import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/router/routes_manager.dart';
 import '../../../data/request/note_requests.dart';
 
 class AddNotePage extends StatefulWidget {
@@ -37,7 +40,26 @@ class _AddNotePageState extends State<AddNotePage> {
             context,
             title: "Add Note",
             message: "Successfully added note",
-            onDone: () => Navigator.pop(context),
+            onDone: () {
+              Navigator.pop(context);
+              DialogUtils.buildSetReminderDialog(
+                  context: context,
+                  onNoClick: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  onYesClick: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(
+                      context,
+                      Routes.setReminderRoute,
+                      arguments: SetReminderArg(
+                        reminderOn: ReminderOnEnum.note,
+                        noteId: state.notes[0].id.toString(),
+                      ),
+                    );
+                  });
+            },
           );
         }
       },

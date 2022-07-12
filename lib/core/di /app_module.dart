@@ -5,6 +5,7 @@ import 'package:document_bank/data/repository/common_repository_impl.dart';
 import 'package:document_bank/data/repository/document_repository_impl.dart';
 import 'package:document_bank/data/repository/goal_repository_impl.dart';
 import 'package:document_bank/data/repository/memo_repository_impl.dart';
+import 'package:document_bank/data/repository/reminder_repository_impl.dart';
 import 'package:document_bank/data/source/local_source.dart';
 import 'package:document_bank/data/source/remote_source.dart';
 import 'package:document_bank/domain/repository/auth_repository.dart';
@@ -13,12 +14,19 @@ import 'package:document_bank/domain/repository/document_repository.dart';
 import 'package:document_bank/domain/repository/goal_repository.dart';
 import 'package:document_bank/domain/repository/memo_repository.dart';
 import 'package:document_bank/domain/repository/note_repository.dart';
+import 'package:document_bank/domain/repository/reminder_repository.dart';
 import 'package:document_bank/domain/usecase/add_note_usecase.dart';
+import 'package:document_bank/domain/usecase/add_reminder_usecase.dart';
+import 'package:document_bank/domain/usecase/complete_goal_usecase.dart';
 import 'package:document_bank/domain/usecase/create_goal_usecase.dart';
 import 'package:document_bank/domain/usecase/create_memo_usecase.dart';
+import 'package:document_bank/domain/usecase/delete_all_goals_usecase.dart';
+import 'package:document_bank/domain/usecase/delete_reminder_usecase.dart';
 import 'package:document_bank/domain/usecase/fetch_contacts_usecase.dart';
+import 'package:document_bank/domain/usecase/get_all_documents_usecase.dart';
 import 'package:document_bank/domain/usecase/get_all_notes_usecase.dart';
 import 'package:document_bank/domain/usecase/get_memos_usecase.dart';
+import 'package:document_bank/domain/usecase/get_reminders_usecase.dart';
 import 'package:document_bank/domain/usecase/get_todo_goals_usecase.dart';
 import 'package:document_bank/domain/usecase/login_usecase.dart';
 import 'package:document_bank/domain/usecase/otp_verify_usecase.dart';
@@ -33,9 +41,11 @@ import 'package:document_bank/presentation/auth/blocs/login_bloc/login_bloc.dart
 import 'package:document_bank/presentation/auth/blocs/otp_verify/otp_verify_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/register/register_bloc.dart';
 import 'package:document_bank/presentation/contacts/blocs/contact/contact_bloc.dart';
+import 'package:document_bank/presentation/docs/blocs/doc/docs_cubit.dart';
 import 'package:document_bank/presentation/goal/blocs/goal_bloc.dart';
 import 'package:document_bank/presentation/landing/blocs/landing/landing_cubit.dart';
 import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
+import 'package:document_bank/presentation/reminder/blocs/reminder/reminder_cubit.dart';
 import 'package:document_bank/presentation/reminder/blocs/set_reminder/set_reminder_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
@@ -89,6 +99,8 @@ Future<void> initAppModule() async {
       () => DocumentRepositoryImpl(instance(), instance()));
   instance.registerLazySingleton<NoteRepository>(
       () => NoteRepositoryImpl(instance(), instance()));
+  instance.registerLazySingleton<ReminderRepository>(
+      () => ReminderRepositoryImpl(instance(), instance()));
 
   //blocs
   instance.registerLazySingleton<AuthBloc>(() => AuthBloc(instance()));
@@ -102,6 +114,9 @@ Future<void> initAppModule() async {
   initEmailVerifyModule();
   initLandingModule();
   initNoteModule();
+  initDocumentsModule();
+  initRemindersModule();
+  initGoalModule();
 }
 
 void initLoginModule() {
@@ -159,9 +174,15 @@ void initGoalModule() {
   if (!GetIt.I.isRegistered<CreateGoalUseCase>()) {
     instance.registerFactory<CreateGoalUseCase>(
         () => CreateGoalUseCase(instance()));
+    instance.registerFactory<DeleteAllGoalsUseCase>(
+        () => DeleteAllGoalsUseCase(instance()));
+    instance.registerFactory<CompleteGoalUseCase>(
+        () => CompleteGoalUseCase(instance()));
     instance.registerFactory<GetTodoGoalsUseCase>(
         () => GetTodoGoalsUseCase(instance()));
-    instance.registerFactory<GoalBloc>(() => GoalBloc(instance(), instance()));
+    instance.registerFactory<GoalBloc>(
+      () => GoalBloc(instance(), instance(), instance(), instance()),
+    );
   }
 }
 
@@ -185,7 +206,9 @@ void initAddDocumentsModule() {
 
 void initReminderModule() {
   if (!GetIt.I.isRegistered<SetReminderCubit>()) {
-    instance.registerFactory<SetReminderCubit>(() => SetReminderCubit());
+    instance.registerFactory(() => AddReminderUseCase(instance()));
+    instance
+        .registerFactory<SetReminderCubit>(() => SetReminderCubit(instance()));
   }
 }
 
@@ -197,5 +220,22 @@ void initNoteModule() {
         () => AddNoteUseCase(instance()));
     instance.registerLazySingleton<NotesCubit>(
         () => NotesCubit(instance(), instance()));
+  }
+}
+
+void initDocumentsModule() {
+  if (!GetIt.I.isRegistered<GetAllDocumentsUseCase>()) {
+    instance.registerLazySingleton<GetAllDocumentsUseCase>(
+        () => GetAllDocumentsUseCase(instance()));
+    instance.registerLazySingleton<DocsCubit>(() => DocsCubit(instance()));
+  }
+}
+
+void initRemindersModule() {
+  if (!GetIt.I.isRegistered<GetRemindersUseCase>()) {
+    instance.registerFactory(() => GetRemindersUseCase(instance()));
+    instance.registerFactory(() => DeleteReminderUseCase(instance()));
+    instance.registerFactory<ReminderCubit>(
+        () => ReminderCubit(instance(), instance()));
   }
 }
