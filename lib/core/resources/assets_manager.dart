@@ -17,6 +17,11 @@ class IconAssets {
   static const String calenderImg = "$iconPath/calender.png";
   static const String timeImg = "$iconPath/time.png";
   static const String dropDownImg = "$iconPath/drop-down.png";
+  static const String aboutUsImg = "$iconPath/about-us.png";
+  static const String eyeImg = "$iconPath/eye.png";
+  static const String keyLockImg = "$iconPath/key-lock.png";
+  static const String paperImg = "$iconPath/paper.png";
+  static const String personCheckImg = "$iconPath/person-check.png";
 }
 
 class ImageAssets {

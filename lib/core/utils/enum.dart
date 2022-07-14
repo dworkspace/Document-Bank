@@ -20,3 +20,27 @@ extension ReminderRecurringStringX on ReminderRecurringEnum {
     }
   }
 }
+
+enum ReminderOnEnum { photo, note }
+
+enum VerificationStatus { verificationRemaining, profilePending, allCompleted }
+
+extension VerificationStatusTextX on VerificationStatus {
+  String getStringValue() {
+    switch (this) {
+      case VerificationStatus.verificationRemaining:
+        return "VERIFICATION_REMAINING";
+      case VerificationStatus.profilePending:
+        return "PROFILE_PENDING";
+      case VerificationStatus.allCompleted:
+        return "ALL_COMPLETED";
+      default:
+        return "";
+    }
+  }
+}
+/**
+ * VERIFICIATION_REMAINING
+    PROFILE_PENDING
+    ALL_COMPLETED
+ */

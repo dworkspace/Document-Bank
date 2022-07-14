@@ -1,5 +1,6 @@
 import 'package:document_bank/core/resources/color_manager.dart';
 import 'package:document_bank/core/resources/styles_manager.dart';
+import 'package:document_bank/core/router/arguments/add_note_args.dart';
 import 'package:document_bank/core/router/routes_manager.dart';
 import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
 import 'package:flutter/material.dart';
@@ -64,34 +65,49 @@ class _AllNotesPageState extends State<AllNotesPage> {
                             onDismissed: (direction) {
                               //todo: remove data from list
                             },
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 12.0),
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 8.0),
-                              decoration: BoxDecoration(
-                                  color: ColorManager.darkBlue.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8.0)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    note.title,
-                                    style: getMediumStyle(
-                                        color: ColorManager.darkBlue,
-                                        fontSize: 16.0),
-                                  ),
-                                  Text(
-                                    note.content,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: getRegularStyle(
-                                        color: ColorManager.darkBlue
-                                            .withOpacity(0.7),
-                                        fontSize: 12.0),
-                                  )
-                                ],
+                            child: GestureDetector(
+                              onTap: () {
+                                final AddNoteArg args = AddNoteArg(
+                                  title: note.title,
+                                  description: note.content,
+                                  id: note.id,
+                                );
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.addNoteRoute,
+                                  arguments: args,
+                                );
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 12.0),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                decoration: BoxDecoration(
+                                    color:
+                                        ColorManager.darkBlue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8.0)),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      note.title,
+                                      style: getMediumStyle(
+                                          color: ColorManager.darkBlue,
+                                          fontSize: 16.0),
+                                    ),
+                                    Text(
+                                      note.content,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: getRegularStyle(
+                                          color: ColorManager.darkBlue
+                                              .withOpacity(0.7),
+                                          fontSize: 12.0),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           );

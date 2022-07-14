@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:document_bank/core/resources/color_manager.dart';
 import 'package:document_bank/core/resources/styles_manager.dart';
 import 'package:flutter/material.dart';
@@ -266,11 +267,83 @@ class DialogUtils {
         });
   }
 
+  static void buildImageViewDialog(
+      {required BuildContext context, required String url}) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 24),
+            child: CachedNetworkImage(
+              imageUrl: url,
+              placeholder: (context, url) => const LinearProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              fit: BoxFit.cover,
+            ),
+          );
+        });
+  }
+
+  static void buildPhotoPickerDialog(
+      {required BuildContext context,
+      VoidCallback? onCameraTap,
+      VoidCallback? onGalleryTap}) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: onCameraTap,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: ColorManager.whiteColor,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(18.0),
+                            bottomLeft: Radius.circular(18.0),
+                          )),
+                      padding: const EdgeInsets.all(24.0),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        size: 60.0,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: onGalleryTap,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: ColorManager.primaryYellow,
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(18.0),
+                            bottomRight: Radius.circular(18.0),
+                          )),
+                      padding: const EdgeInsets.all(24.0),
+                      child: const Icon(
+                        Icons.photo,
+                        size: 60.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   static Future<DateTime?> inputDateFromUser(BuildContext context) async {
     DateTime? _pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2015),
+      firstDate: DateTime(1900),
       lastDate: DateTime(2023),
     );
     return _pickedDate;

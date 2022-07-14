@@ -8,4 +8,7 @@ abstract class NoteRepository {
 
   Future<Either<CustomFailure, List<Note>>> saveNote(
       AddNoteRequest addNoteRequest);
+
+  Future<Either<CustomFailure, List<Note>>> updateNote(
+      AddNoteRequest addNoteRequest);
 }

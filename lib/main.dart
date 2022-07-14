@@ -8,8 +8,12 @@ import 'package:document_bank/presentation/auth/blocs/forgot_password/forgotpass
 import 'package:document_bank/presentation/auth/blocs/login_bloc/login_bloc.dart';
 import 'package:document_bank/presentation/auth/blocs/otp_verify/otp_verify_cubit.dart';
 import 'package:document_bank/presentation/auth/blocs/register/register_bloc.dart';
+import 'package:document_bank/presentation/docs/blocs/doc/docs_cubit.dart';
+import 'package:document_bank/presentation/goal/blocs/goal_bloc.dart';
 import 'package:document_bank/presentation/landing/blocs/landing/landing_cubit.dart';
 import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
+import 'package:document_bank/presentation/profile/blocs/profile/profile_cubit.dart';
+import 'package:document_bank/presentation/reminder/blocs/reminder/reminder_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +66,11 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (_) => instance<LandingCubit>()),
             BlocProvider(create: (_) => instance<FolderCubit>()),
             BlocProvider(create: (_) => instance<NotesCubit>()),
+            BlocProvider(create: (_) => instance<DocsCubit>()),
+            BlocProvider(create: (_) => instance<ProfileCubit>()),
+            BlocProvider(create: (_) => instance<ReminderCubit>()),
+            BlocProvider(
+                create: (_) => instance<GoalBloc>()..add(GetAllGoals())),
           ],
           child: MaterialApp(
             navigatorKey: _navigatorKey,

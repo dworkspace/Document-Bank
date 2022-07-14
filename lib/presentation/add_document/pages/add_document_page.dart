@@ -4,10 +4,13 @@ import 'package:document_bank/core/resources/color_manager.dart';
 import 'package:document_bank/core/resources/styles_manager.dart';
 import 'package:document_bank/core/router/routes_manager.dart';
 import 'package:document_bank/core/utils/dialog_utils.dart';
+import 'package:document_bank/core/utils/enum.dart';
 import 'package:document_bank/core/widgets/custom_input_field.dart';
 import 'package:document_bank/presentation/add_document/blocs/add_documents/add_documents_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../core/router/arguments/set_reminder_arg.dart';
 
 class AddDocumentPage extends StatefulWidget {
   const AddDocumentPage({Key? key}) : super(key: key);
@@ -41,7 +44,34 @@ class _AddDocumentPageState extends State<AddDocumentPage> {
             context,
             title: "Document Upload Success",
             message: "Successfully uploaded documents",
-            onDone: () => Navigator.pop(context),
+            onDone: () {
+              Navigator.pop(context);
+              DialogUtils.buildSetReminderDialog(
+                  context: context,
+                  onNoClick: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  onYesClick: () {
+                    Navigator.pop(context);
+                    String ids = "";
+                    for (var element
+                        in state.documents.take(state.documents.length - 1)) {
+                      ids = element.id.toString() + ",";
+                    }
+                    ids = ids +
+                        state.documents[state.documents.length - 1].id
+                            .toString();
+                    Navigator.pushNamed(
+                      context,
+                      Routes.setReminderRoute,
+                      arguments: SetReminderArg(
+                        reminderOn: ReminderOnEnum.photo,
+                        ids: ids,
+                      ),
+                    );
+                  });
+            },
           );
         }
       },
@@ -265,16 +295,16 @@ class _AddDocumentPageState extends State<AddDocumentPage> {
                         Navigator.pop(context);
                       });
                     } else {
-                      // context.read<AddDocumentsBloc>().add(
-                      //     StoreDocuments(folderName: _docFolderNameCtrl.text));
-                      DialogUtils.buildSetReminderDialog(
-                        context: context,
-                        onNoClick: () => Navigator.pop(context),
-                        onYesClick: () {
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, Routes.setReminderRoute);
-                        },
-                      );
+                      context.read<AddDocumentsBloc>().add(
+                          StoreDocuments(folderName: _docFolderNameCtrl.text));
+                      // DialogUtils.buildSetReminderDialog(
+                      //   context: context,
+                      //   onNoClick: () => Navigator.pop(context),
+                      //   onYesClick: () {
+                      //     Navigator.pop(context);
+                      //     Navigator.pushNamed(context, Routes.setReminderRoute);
+                      //   },
+                      // );
                     }
                   }
                 },

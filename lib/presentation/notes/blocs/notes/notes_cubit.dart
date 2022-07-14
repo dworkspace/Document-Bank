@@ -6,6 +6,7 @@ import 'package:document_bank/data/request/note_requests.dart';
 import 'package:document_bank/domain/model/note.dart';
 import 'package:document_bank/domain/usecase/add_note_usecase.dart';
 import 'package:document_bank/domain/usecase/get_all_notes_usecase.dart';
+import 'package:document_bank/domain/usecase/update_note_usecase.dart';
 
 part 'notes_state.dart';
 
@@ -13,6 +14,7 @@ class NotesCubit extends Cubit<NotesState> {
   NotesCubit(
     this._getAllNotesUseCase,
     this._addNoteUseCase,
+    this._updateNoteUseCase,
   ) : super(NotesState()) {
     getAllNotes();
   }
@@ -42,11 +44,37 @@ class NotesCubit extends Cubit<NotesState> {
             addNoteErrorMsg: fail.message),
       ),
       (data) => emit(
-        state.copyWith(addNoteStatus: StateStatusEnum.success, notes: data),
+        state.copyWith(
+          addNoteStatus: StateStatusEnum.success,
+          status: StateStatusEnum.success,
+          notes: data,
+        ),
+      ),
+    );
+  }
+
+  void updateNote(AddNoteRequest request) async {
+    emit(state.copyWith(addNoteStatus: StateStatusEnum.loading));
+
+    final response = await _updateNoteUseCase.execute(request);
+
+    response.fold(
+      (fail) => emit(
+        state.copyWith(
+            addNoteStatus: StateStatusEnum.failure,
+            addNoteErrorMsg: fail.message),
+      ),
+      (data) => emit(
+        state.copyWith(
+          addNoteStatus: StateStatusEnum.success,
+          status: StateStatusEnum.success,
+          notes: data,
+        ),
       ),
     );
   }
 
   final GetAllNotesUseCase _getAllNotesUseCase;
   final AddNoteUseCase _addNoteUseCase;
+  final UpdateNoteUseCase _updateNoteUseCase;
 }

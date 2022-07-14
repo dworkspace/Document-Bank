@@ -7,3 +7,4 @@ class AddDocumentsRequest {
     required this.paths,
   });
 }
+

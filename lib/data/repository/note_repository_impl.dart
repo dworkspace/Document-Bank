@@ -50,4 +50,23 @@ class NoteRepositoryImpl extends NoteRepository {
       return const Left(NoInternetFailure());
     }
   }
+
+  @override
+  Future<Either<CustomFailure, List<Note>>> updateNote(
+      AddNoteRequest addNoteRequest) async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final List<NoteResponse> response =
+            await _remoteSource.updateNote(addNoteRequest);
+        final List<Note> notes =
+            List<Note>.from(response.map((e) => Note.fromNoteResponse(e)))
+                .toList();
+        return Right(notes);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
 }

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:document_bank/data/request/document_requests.dart';
-import 'package:document_bank/domain/model/document.dart';
+import 'package:document_bank/domain/model/add_document.dart';
 import 'package:document_bank/domain/usecase/store_documents_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,17 +22,25 @@ class AddDocumentsBloc extends Bloc<AddDocumentsEvent, AddDocumentsState> {
 
   void _onPickedDocFile(
       PickedDocFile event, Emitter<AddDocumentsState> emit) async {
-    XFile? pickedFile;
-    pickedFile = await _imagePicker.pickImage(
-      source: event.pickedFileFromEnum == PickedFileFromEnum.camera
-          ? ImageSource.camera
-          : ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      List<File> docFiles = List.from(state.pickedDocFiles);
-      final newFile = File(pickedFile.path);
-      docFiles.add(newFile);
-      emit(state.copyWith(pickedDocFiles: docFiles));
+    if (event.pickedFileFromEnum == PickedFileFromEnum.camera) {
+      XFile? pickedFile;
+      pickedFile = await _imagePicker.pickImage(source: ImageSource.camera);
+      if (pickedFile != null) {
+        List<File> docFiles = List.from(state.pickedDocFiles);
+        final newFile = File(pickedFile.path);
+        docFiles.add(newFile);
+        emit(state.copyWith(pickedDocFiles: docFiles));
+      }
+    } else {
+      List<XFile>? pickedFiles = await _imagePicker.pickMultiImage();
+      if(pickedFiles!=null && pickedFiles.isNotEmpty){
+        List<File> docFiles = List.from(state.pickedDocFiles);
+        for (var xFile in pickedFiles) {
+          final newFile = File(xFile.path);
+          docFiles.add(newFile);
+          emit(state.copyWith(pickedDocFiles: docFiles));
+        }
+      }
     }
   }
 
