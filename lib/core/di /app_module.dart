@@ -273,3 +273,20 @@ void initProfileModule() {
         .registerFactory<EditProfileCubit>(() => EditProfileCubit(instance()));
   }
 }
+
+// void initDocumentsModule() {
+//   if (!GetIt.I.isRegistered<GetAllDocumentsUseCase>()) {
+//     instance.registerLazySingleton<GetAllDocumentsUseCase>(
+//         () => GetAllDocumentsUseCase(instance()));
+//     instance.registerLazySingleton<DocsCubit>(() => DocsCubit(instance()));
+//   }
+// }
+
+// void initRemindersModule() {
+//   if (!GetIt.I.isRegistered<GetRemindersUseCase>()) {
+//     instance.registerFactory(() => GetRemindersUseCase(instance()));
+//     instance.registerFactory(() => DeleteReminderUseCase(instance()));
+//     instance.registerFactory<ReminderCubit>(
+//         () => ReminderCubit(instance(), instance()));
+//   }
+// }

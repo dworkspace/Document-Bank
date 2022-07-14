@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:document_bank/core/utils/dialog_utils.dart';
 import 'package:document_bank/domain/model/document.dart';
 import 'package:document_bank/presentation/docs/blocs/doc/docs_cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +13,8 @@ class DocumentsView extends StatefulWidget {
 }
 
 class _DocumentsViewState extends State<DocumentsView> {
+  bool selectEnable = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DocsCubit, DocsState>(

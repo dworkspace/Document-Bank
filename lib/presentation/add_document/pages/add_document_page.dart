@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/router/arguments/set_reminder_arg.dart';
+import '../../docs/blocs/doc/docs_cubit.dart';
 
 class AddDocumentPage extends StatefulWidget {
   const AddDocumentPage({Key? key}) : super(key: key);
@@ -46,6 +47,7 @@ class _AddDocumentPageState extends State<AddDocumentPage> {
             message: "Successfully uploaded documents",
             onDone: () {
               Navigator.pop(context);
+              context.read<DocsCubit>().getAllDocuments();
               DialogUtils.buildSetReminderDialog(
                   context: context,
                   onNoClick: () {

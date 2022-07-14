@@ -40,82 +40,140 @@ class MyRemindersPage extends StatelessWidget {
               physics: const ClampingScrollPhysics(),
               itemBuilder: (context, index) {
                 final Reminder _reminder = _reminderList[index];
-                return GestureDetector(
-                  onTap: (){
-
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Slidable(
-                          direction: Axis.horizontal,
-                          closeOnScroll: false,
-                          key: ValueKey(UniqueKey()),
-                          dragStartBehavior: DragStartBehavior.start,
-                          startActionPane: ActionPane(
-                            extentRatio: 0.4,
-                            motion: const ScrollMotion(),
+                // return Slidable(
+                //   key: UniqueKey(),
+                //   closeOnScroll: false,
+                //   endActionPane: ActionPane(
+                //     extentRatio: 0.15,
+                //     dismissible: DismissiblePane(onDismissed: () {}),
+                //     motion: const ScrollMotion(),
+                //     children: [
+                //       SlidableAction(
+                //         onPressed: (context) {},
+                //         backgroundColor: Color(0xFF7BC043),
+                //         foregroundColor: Colors.white,
+                //         icon: Icons.archive,
+                //         label: 'Archive',
+                //       ),
+                //       SlidableAction(
+                //         onPressed: (context) {},
+                //         backgroundColor: Color(0xFF0392CF),
+                //         foregroundColor: Colors.white,
+                //         icon: Icons.save,
+                //         label: 'Save',
+                //       ),
+                //     ],
+                //   ),
+                //   child: Container(
+                //     margin: const EdgeInsets.symmetric(
+                //         vertical: 8.0, horizontal: 16.0),
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Text(
+                //           _reminder.title,
+                //           style: getMediumStyle(
+                //             color: ColorManager.blackColor,
+                //             fontSize: 16.0,
+                //           ),
+                //         ),
+                //         Text(
+                //           "${_reminder.date}, ${_reminder.time}",
+                //           style: getRegularStyle(
+                //             color: ColorManager.blackColor,
+                //             fontSize: 14.0,
+                //           ),
+                //         ),
+                //         Text(
+                //           _reminder.recurringPeriod,
+                //           style: getRegularStyle(
+                //             color: ColorManager.blackColor,
+                //             fontSize: 12.0,
+                //           ).copyWith(
+                //             fontStyle: FontStyle.italic,
+                //           ),
+                //         ),
+                //         Divider(
+                //           thickness: 1.0,
+                //           color: ColorManager.grayColor.withOpacity(0.5),
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // );
+                return Container(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Slidable(
+                        direction: Axis.horizontal,
+                        closeOnScroll: false,
+                        key: ValueKey(UniqueKey()),
+                        dragStartBehavior: DragStartBehavior.start,
+                        startActionPane: ActionPane(
+                          extentRatio: 0.4,
+                          motion: const ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) {
+                                context
+                                    .read<ReminderCubit>()
+                                    .deleteReminder(_reminder.id);
+                              },
+                              backgroundColor: ColorManager.redColor,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                            ),
+                            SlidableAction(
+                              onPressed: (context) {
+                                //todo: Edit Action
+                              },
+                              backgroundColor: ColorManager.primaryYellow,
+                              foregroundColor: Colors.white,
+                              icon: Icons.edit_outlined,
+                            ),
+                          ],
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SlidableAction(
-                                onPressed: (context) {
-                                 context.read<ReminderCubit>().deleteReminder(_reminder.id);
-                                },
-                                backgroundColor: ColorManager.redColor,
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete,
+                              Text(
+                                _reminder.title,
+                                style: getMediumStyle(
+                                  color: ColorManager.blackColor,
+                                  fontSize: 16.0,
+                                ),
                               ),
-                              SlidableAction(
-                                onPressed: (context) {
-                                  //todo: Edit Action
-                                },
-                                backgroundColor: ColorManager.primaryYellow,
-                                foregroundColor: Colors.white,
-                                icon: Icons.edit_outlined,
+                              Text(
+                                "${_reminder.date}, ${_reminder.time}",
+                                style: getRegularStyle(
+                                  color: ColorManager.blackColor,
+                                  fontSize: 14.0,
+                                ),
+                              ),
+                              Text(
+                                _reminder.recurringPeriod,
+                                style: getRegularStyle(
+                                  color: ColorManager.blackColor,
+                                  fontSize: 12.0,
+                                ).copyWith(
+                                  fontStyle: FontStyle.italic,
+                                ),
                               ),
                             ],
                           ),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _reminder.title,
-                                  style: getMediumStyle(
-                                    color: ColorManager.blackColor,
-                                    fontSize: 16.0,
-                                  ),
-                                ),
-                                Text(
-                                  "${_reminder.date}, ${_reminder.time}",
-                                  style: getRegularStyle(
-                                    color: ColorManager.blackColor,
-                                    fontSize: 14.0,
-                                  ),
-                                ),
-                                Text(
-                                  _reminder.recurringPeriod,
-                                  style: getRegularStyle(
-                                    color: ColorManager.blackColor,
-                                    fontSize: 12.0,
-                                  ).copyWith(
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
-                        Divider(
-                          thickness: 1.0,
-                          color: ColorManager.grayColor.withOpacity(0.5),
-                        )
-                      ],
-                    ),
+                      ),
+                      Divider(
+                        thickness: 1.0,
+                        color: ColorManager.grayColor.withOpacity(0.5),
+                      )
+                    ],
                   ),
                 );
               },
