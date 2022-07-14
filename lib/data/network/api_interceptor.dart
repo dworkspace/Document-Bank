@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:document_bank/core/utils/extension.dart';
 
 import '../../core/di /app_module.dart';
 import '../../core/utils/app_prefs.dart';
@@ -87,7 +88,12 @@ class InternalServerErrorException extends DioError {
 
   @override
   String toString() {
-    return 'Unknown error occurred, please try again later.';
+    try {
+      final Map<String, dynamic> msgMap = response?.data['errors'];
+      return msgMap.getErrorMessage();
+    } catch (e) {
+      return 'Unknown error occurred, please try again later.';
+    }
   }
 }
 
@@ -96,7 +102,12 @@ class ConflictException extends DioError {
 
   @override
   String toString() {
-    return 'Conflict occurred';
+    try {
+      final Map<String, dynamic> msgMap = response?.data['errors'];
+      return msgMap.getErrorMessage();
+    } catch (e) {
+      return "Conflict Occur";
+    }
   }
 }
 
@@ -106,16 +117,23 @@ class UnauthorizedException extends DioError {
 
   @override
   String toString() {
-    if (requestOptions.path == "/register-user") {
+    // if (requestOptions.path == "/register-user") {
+    //   final Map<String, dynamic> msgMap = response?.data['errors'];
+    //   String errorMessage = "";
+    //   msgMap.forEach((key, value) {
+    //     final _value = value;
+    //     for (var element in _value) {
+    //       errorMessage = errorMessage + " " + element;
+    //     }
+    //   });
+    //   return errorMessage;
+    // }
+    // return response?.data['message'] ?? 'Access denied';
+    try {
       final Map<String, dynamic> msgMap = response?.data['errors'];
-      String errorMessage = "";
-      msgMap.forEach((key, value) {
-        final _value = value;
-        for (var element in _value) {
-          errorMessage = errorMessage + " " + element;
-        }
-      });
-      return errorMessage;
+      return msgMap.getErrorMessage();
+    } catch (e) {
+      return "Access Denied for this";
     }
     return response?.data['message'] ?? 'Access denied';
   }
@@ -127,15 +145,12 @@ class UnProcessableException extends DioError {
 
   @override
   String toString() {
-    final Map<String, dynamic> msgMap = response?.data['errors'];
-    String errorMessage = "";
-    msgMap.forEach((key, value) {
-      final _value = value;
-      for (var element in _value) {
-        errorMessage = errorMessage + " " + element;
-      }
-    });
-    return errorMessage;
+    try {
+      final Map<String, dynamic> msgMap = response?.data['errors'];
+      return msgMap.getErrorMessage();
+    } catch (e) {
+      return "Unprocessable data";
+    }
 
     // return response?.data['message'] ?? 'Access denied';
   }

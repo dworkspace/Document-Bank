@@ -5,7 +5,7 @@ class ForgotpasswordState {
   final ForgotPasswordActionEnum? resetPasswordStatus;
   final ForgotPasswordResponse? sendOtpResponse;
   final ForgotPasswordResponse? verifyOtpResponse;
-  final ForgotPasswordResponse? resetPasswordResponse;
+  final String? resetPasswordResponse;
   final String? errorMessage;
 
   ForgotpasswordState({
@@ -22,7 +22,7 @@ class ForgotpasswordState {
     ForgotPasswordActionEnum? resetPasswordStatus,
     ForgotPasswordResponse? sendOtpResponse,
     ForgotPasswordResponse? verifyOtpResponse,
-    ForgotPasswordResponse? resetPasswordResponse,
+    String? resetPasswordResponse,
     String? errorMessage,
   }) {
     return ForgotpasswordState(

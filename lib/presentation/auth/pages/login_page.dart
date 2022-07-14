@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         if (state is LoginLoading) {
           DialogUtils.buildLoadingDialog(context);
         } else if (state is LoginFailure) {
-          Navigator.of(context, rootNavigator: true).pop();
+          Navigator.pop(context);
           DialogUtils.buildErrorMessageDialog(
             context,
             title: "Login Failed",

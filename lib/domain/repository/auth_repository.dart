@@ -14,6 +14,6 @@ abstract class AuthRepository {
 
   Future<Either<CustomFailure, ForgotPasswordResponse>>
       sendOtpForForgotPassword(String email);
-  Future<Either<CustomFailure, ForgotPasswordResponse>> resetForgotPassword(
+  Future<Either<CustomFailure, String>> resetForgotPassword(
       ResetPasswordRequest resetPasswordRequest);
 }

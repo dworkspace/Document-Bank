@@ -8,3 +8,16 @@ extension Utility on BuildContext {
         FocusScope.of(this).focusedChild?.context?.widget is! EditableText);
   }
 }
+
+extension ErrorsX on Map<String, dynamic> {
+  String getErrorMessage() {
+    String errorMessage = "";
+    forEach((key, value) {
+      final _value = value;
+      for (var element in _value) {
+        errorMessage = errorMessage + " " + element;
+      }
+    });
+    return errorMessage;
+  }
+}

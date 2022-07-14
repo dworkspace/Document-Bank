@@ -53,7 +53,7 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   /*
-   * ACTIVATE ACCOUNT 
+   * ACTIVATE ACCOUNT
    */
   @override
   Future<Either<CustomFailure, OtpVerifyResponse>> verifyOtp(
@@ -72,14 +72,14 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   /*
-   * RESET FORGOT PASSWORD 
+   * RESET FORGOT PASSWORD
    */
   @override
-  Future<Either<CustomFailure, ForgotPasswordResponse>> resetForgotPassword(
+  Future<Either<CustomFailure, String>> resetForgotPassword(
       ResetPasswordRequest resetPasswordRequest) async {
     if (await _networkInfo.isConnected()) {
       try {
-        final ForgotPasswordResponse response =
+        final String response =
             await _remoteSource.resetPassword(resetPasswordRequest);
         return Right(response);
       } on ServerException catch (e) {
@@ -91,7 +91,7 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   /*
-   * SEND OTP FOR FORGOT PASSWORD 
+   * SEND OTP FOR FORGOT PASSWORD
    */
   @override
   Future<Either<CustomFailure, ForgotPasswordResponse>>

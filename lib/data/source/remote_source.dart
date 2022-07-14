@@ -25,8 +25,7 @@ abstract class RemoteSource {
 
   Future<ForgotPasswordResponse> forgotPassword(String email);
 
-  Future<ForgotPasswordResponse> resetPassword(
-      ResetPasswordRequest resetPasswordRequest);
+  Future<String> resetPassword(ResetPasswordRequest resetPasswordRequest);
 
   Future<List<TodoGoalResponse>> createTodoGoal(String title);
 
@@ -146,7 +145,7 @@ class RemoteSourceImpl implements RemoteSource {
    *  RESET PASSWORD (FORGOT PASSWORD)
    */
   @override
-  Future<ForgotPasswordResponse> resetPassword(
+  Future<String> resetPassword(
       ResetPasswordRequest resetPasswordRequest) async {
     try {
       final loginResponse = await dio.post(
@@ -154,7 +153,7 @@ class RemoteSourceImpl implements RemoteSource {
         data: resetPasswordRequest.toMap(),
       );
       final mapBody = loginResponse.data;
-      return ForgotPasswordResponse.fromMap(mapBody);
+      return mapBody["message"];
     } on Exception catch (e) {
       throw ServerException(message: e.toString());
     }

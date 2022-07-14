@@ -25,6 +25,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final TextEditingController _newPasswordCtrl = TextEditingController();
   final TextEditingController _confirmPasswordCtrl = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ForgotpasswordCubit, ForgotpasswordState>(
@@ -48,7 +49,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               DialogUtils.buildSuccessMessageDialog(
                 context,
                 title: "Password Reset Success",
-                message: state.resetPasswordResponse!.message,
+                message: state.resetPasswordResponse ?? "Unknown Error",
                 onDone: () {
                   Navigator.pop(context);
                   Navigator.pushReplacementNamed(context, Routes.loginRoute);
