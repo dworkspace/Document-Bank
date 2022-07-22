@@ -5,6 +5,7 @@ enum AuthStatus {
   loading,
   appFirstOnboarded,
   authenticated,
+  profileNotSetup,
   unauthenticated,
   unverified,
 }
@@ -24,6 +25,9 @@ class AuthState {
       : this._(status: AuthStatus.unauthenticated);
 
   const AuthState.unverified() : this._(status: AuthStatus.unverified);
+
+  const AuthState.profileNotSetup()
+      : this._(status: AuthStatus.profileNotSetup);
 
   const AuthState.appFirstOnBoarded()
       : this._(status: AuthStatus.appFirstOnboarded);

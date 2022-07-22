@@ -17,6 +17,15 @@ class AppPreferences {
     _sharedPreferences.setString(AppConstants.accessToken, accessToken);
   }
 
+  Future<String?> getUserStatus() async {
+    String? status = _sharedPreferences.getString(AppConstants.userStatus);
+    return status;
+  }
+
+  Future<void> saveUserStatus(String status) async {
+    _sharedPreferences.setString(AppConstants.userStatus, status);
+  }
+
   Future<void> cleanPreference() async {
     await _sharedPreferences.clear();
   }

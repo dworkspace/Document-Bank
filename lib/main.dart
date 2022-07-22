@@ -102,6 +102,18 @@ class _MyAppState extends State<MyApp> {
                         (route) => false,
                       );
                       break;
+                    case AuthStatus.unverified:
+                      _navigator.pushNamedAndRemoveUntil<void>(
+                        Routes.emailVerifyRoute,
+                        (route) => false,
+                      );
+                      break;
+                    case AuthStatus.profileNotSetup:
+                      _navigator.pushNamedAndRemoveUntil<void>(
+                        Routes.accountSetupRoute,
+                        (route) => false,
+                      );
+                      break;
                     default:
                       break;
                   }

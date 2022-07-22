@@ -39,6 +39,21 @@ extension VerificationStatusTextX on VerificationStatus {
     }
   }
 }
+
+extension VerificationStatusStringX on String {
+  VerificationStatus getVerificationStatusEnum() {
+    switch (this) {
+      case "VERIFICATION_REMAINING":
+        return VerificationStatus.verificationRemaining;
+      case "PROFILE_PENDING":
+        return VerificationStatus.profilePending;
+      case "ALL_COMPLETED":
+        return VerificationStatus.allCompleted;
+      default:
+        return VerificationStatus.verificationRemaining;
+    }
+  }
+}
 /**
  * VERIFICIATION_REMAINING
     PROFILE_PENDING

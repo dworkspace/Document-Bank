@@ -32,3 +32,23 @@ class ProfileResponse {
     );
   }
 }
+
+class AccountSetupResponse {
+  final String status;
+  final String message;
+  final ProfileResponse profileResponse;
+
+  AccountSetupResponse({
+    required this.status,
+    required this.message,
+    required this.profileResponse,
+  });
+
+  factory AccountSetupResponse.fromJson(Map<String, dynamic> json) {
+    return AccountSetupResponse(
+      status: json['status'],
+      message: json['message'],
+      profileResponse: ProfileResponse.fromJson(json['data']),
+    );
+  }
+}

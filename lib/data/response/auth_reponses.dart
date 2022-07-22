@@ -1,6 +1,8 @@
+import 'package:document_bank/core/utils/enum.dart';
 import 'package:document_bank/domain/model/user.dart';
 
 class LoginResponse {
+  final VerificationStatus verificationStatus;
   final String message;
   final String accessToken;
   final String tokenType;
@@ -8,6 +10,7 @@ class LoginResponse {
   final User user;
 
   LoginResponse({
+    required this.verificationStatus,
     required this.message,
     required this.accessToken,
     required this.tokenType,
@@ -17,6 +20,7 @@ class LoginResponse {
 
   factory LoginResponse.fromLoginResponse(Map<String, dynamic> map) {
     return LoginResponse(
+      verificationStatus: map['status'].toString().getVerificationStatusEnum(),
       message: map['message']??"",
       accessToken: map["access_token"] ?? "",
       tokenType: map["token_type"] ?? "",

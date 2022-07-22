@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:document_bank/core/utils/app_prefs.dart';
+import 'package:document_bank/core/utils/enum.dart';
 import 'package:document_bank/data/response/auth_reponses.dart';
 import 'package:document_bank/domain/usecase/login_usecase.dart';
 import 'package:equatable/equatable.dart';
@@ -22,6 +23,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginFailure(fail.message));
     }, (data) async {
       _appPreferences.saveAccessToken(data.accessToken);
+      _appPreferences.saveUserStatus(data.verificationStatus.getStringValue());
       emit(LoginSuccess(data));
     });
   }

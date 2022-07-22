@@ -21,6 +21,9 @@ abstract class RemoteSource {
 
   Future<String> register(RegisterRequest registerRequest);
 
+  Future<AccountSetupResponse> accountSetup(
+      AccountSetupRequest accountSetupRequest);
+
   Future<OtpVerifyResponse> verifyOtp(OtpVerifyRequest otpVerifyRequest);
 
   Future<ForgotPasswordResponse> forgotPassword(String email);
@@ -107,6 +110,26 @@ class RemoteSourceImpl implements RemoteSource {
     }
   }
 
+  @override
+  Future<AccountSetupResponse> accountSetup(
+      AccountSetupRequest accountSetupRequest) async {
+    try {
+      var formData = FormData.fromMap(accountSetupRequest.toJson());
+
+      final fileMultipart =
+          await MultipartFile.fromFile(accountSetupRequest.photoPath);
+      formData.files.add(MapEntry("photo", fileMultipart));
+
+      final response = await dio.post("/account-setup", data: formData);
+      final mapBody = response.data;
+      final AccountSetupResponse accountSetupResponse =
+          AccountSetupResponse.fromJson(mapBody);
+      return accountSetupResponse;
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
 /*
  * ACTIVATE ACCOUNT
  */
@@ -141,7 +164,7 @@ class RemoteSourceImpl implements RemoteSource {
     }
   }
 
-  /*
+/*
    *  RESET PASSWORD (FORGOT PASSWORD)
    */
   @override
@@ -159,7 +182,7 @@ class RemoteSourceImpl implements RemoteSource {
     }
   }
 
-  /*
+/*
    * CREATE GOAL
    */
   @override
@@ -179,7 +202,7 @@ class RemoteSourceImpl implements RemoteSource {
     }
   }
 
-  /*
+/*
    * GET ALL  GOALS
    */
   @override
@@ -217,7 +240,7 @@ class RemoteSourceImpl implements RemoteSource {
     }
   }
 
-  /*
+/*
    * CREATE MEMO
    */
   @override

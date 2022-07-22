@@ -17,6 +17,7 @@ import 'package:document_bank/domain/repository/memo_repository.dart';
 import 'package:document_bank/domain/repository/note_repository.dart';
 import 'package:document_bank/domain/repository/profile_repository.dart';
 import 'package:document_bank/domain/repository/reminder_repository.dart';
+import 'package:document_bank/domain/usecase/account_setup_usecase.dart';
 import 'package:document_bank/domain/usecase/add_note_usecase.dart';
 import 'package:document_bank/domain/usecase/add_reminder_usecase.dart';
 import 'package:document_bank/domain/usecase/complete_goal_usecase.dart';
@@ -149,7 +150,10 @@ void initRegisterModule() {
 
 void initAccountSetupModule() {
   if (!GetIt.I.isRegistered<AccountSetupCubit>()) {
-    instance.registerFactory<AccountSetupCubit>(() => AccountSetupCubit());
+    instance.registerFactory<AccountSetupUseCase>(
+        () => AccountSetupUseCase(instance()));
+    instance.registerFactory<AccountSetupCubit>(
+        () => AccountSetupCubit(instance(),instance()));
   }
 }
 

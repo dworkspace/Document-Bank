@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/utils/dialog_utils.dart';
+
 class DocumentsView extends StatefulWidget {
   const DocumentsView({Key? key}) : super(key: key);
 
@@ -55,11 +57,17 @@ class _DocumentsViewState extends State<DocumentsView> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          CachedNetworkImage(
-            imageUrl: _document.photo,
-            placeholder: (context, url) => const LinearProgressIndicator(),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-            fit: BoxFit.cover,
+          GestureDetector(
+            onTap: () {
+              DialogUtils.buildImageViewDialog(
+                  context: context, url: _document.photo);
+            },
+            child: CachedNetworkImage(
+              imageUrl: _document.photo,
+              placeholder: (context, url) => const LinearProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              fit: BoxFit.cover,
+            ),
           ),
         ],
       ),

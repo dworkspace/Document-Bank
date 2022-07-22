@@ -10,14 +10,28 @@ extension StateStatusEnumX on StateStatusEnum {
 
 class AccountSetupState {
   final File? profileImageFile;
+  final StateStatusEnum status;
+  final AccountSetup? accountSetup;
+  final String errorMsg;
 
-  AccountSetupState({this.profileImageFile});
+  AccountSetupState({
+    this.profileImageFile,
+    this.status = StateStatusEnum.initial,
+    this.accountSetup,
+    this.errorMsg = "",
+  });
 
   AccountSetupState copyWith({
     File? profileImageFile,
+    StateStatusEnum? status,
+    AccountSetup? accountSetup,
+    String? errorMsg,
   }) {
     return AccountSetupState(
       profileImageFile: profileImageFile ?? this.profileImageFile,
+      status: status ?? this.status,
+      accountSetup: accountSetup ?? this.accountSetup,
+      errorMsg: errorMsg ?? this.errorMsg,
     );
   }
 }

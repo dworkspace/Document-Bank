@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:document_bank/core/utils/app_prefs.dart';
+import 'package:document_bank/core/utils/enum.dart';
 import 'package:equatable/equatable.dart';
 
 part 'auth_event.dart';
@@ -16,9 +17,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onAuthCheck(AuthCheck event, Emitter<AuthState> emit) async {
     emit(const AuthState.loading());
     final String? accessToken = await _appPreference.getAccessToken();
+    final String? userStatus = await _appPreference.getUserStatus();
     await Future.delayed(const Duration(seconds: 3), () {
       if (accessToken != null && accessToken.isNotEmpty) {
-        emit(const AuthState.authenticated());
+        if (userStatus != null) {
+          final userStatusEnum = userStatus.getVerificationStatusEnum();
+          switch (userStatusEnum) {
+            case VerificationStatus.verificationRemaining:
+              emit(const AuthState.unverified());
+              break;
+            case VerificationStatus.profilePending:
+              emit(const AuthState.profileNotSetup());
+              break;
+            case VerificationStatus.allCompleted:
+              emit(const AuthState.authenticated());
+              break;
+            default:
+              emit(const AuthState.unauthenticated());
+          }
+        } else {
+          emit(const AuthState.unauthenticated());
+        }
       } else {
         emit(const AuthState.unauthenticated());
       }
@@ -26,7 +45,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onLoggedIn(LoggedIn event, Emitter<AuthState> emit) async {
-    emit(const AuthState.authenticated());
+    // emit(const AuthState.authenticated());
+    final String? accessToken = await _appPreference.getAccessToken();
+    final String? userStatus = await _appPreference.getUserStatus();
+
+    if (accessToken != null && accessToken.isNotEmpty) {
+      if (userStatus != null) {
+        final userStatusEnum = userStatus.getVerificationStatusEnum();
+        switch (userStatusEnum) {
+          case VerificationStatus.verificationRemaining:
+            emit(const AuthState.unverified());
+            break;
+          case VerificationStatus.profilePending:
+            emit(const AuthState.profileNotSetup());
+            break;
+          case VerificationStatus.allCompleted:
+            emit(const AuthState.authenticated());
+            break;
+          default:
+            emit(const AuthState.unauthenticated());
+        }
+      } else {
+        emit(const AuthState.unauthenticated());
+      }
+    } else {
+      emit(const AuthState.unauthenticated());
+    }
   }
 
   void _onLoggedOut(LoggedOut event, Emitter<AuthState> emit) async {

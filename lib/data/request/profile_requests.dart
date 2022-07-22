@@ -25,3 +25,28 @@ class UpdateProfileRequest {
     };
   }
 }
+
+class AccountSetupRequest {
+  final String country;
+  final String username;
+  final String phone;
+  final String dob;
+  final String photoPath;
+
+  AccountSetupRequest({
+    required this.country,
+    required this.username,
+    required this.phone,
+    required this.dob,
+    required this.photoPath,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "username": username,
+      "country": country,
+      "dob": dob,
+      "phone": phone,
+    };
+  }
+}

@@ -75,10 +75,11 @@ class RouteGenerator {
       case Routes.accountSetupRoute:
         initAccountSetupModule();
         return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (context) => instance<AccountSetupCubit>(),
-                  child: const AccountSetupPage(),
-                ));
+          builder: (_) => BlocProvider(
+            create: (context) => instance<AccountSetupCubit>(),
+            child: const AccountSetupPage(),
+          ),
+        );
       case Routes.emailVerifyRoute:
         return MaterialPageRoute(
           builder: (_) => OtpVerifyPage(

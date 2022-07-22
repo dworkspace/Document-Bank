@@ -3,8 +3,11 @@ import 'package:document_bank/core/utils/exceptions.dart';
 import 'package:document_bank/core/utils/failure.dart';
 import 'package:document_bank/data/network/network_info.dart';
 import 'package:document_bank/data/request/auth_requests.dart';
+import 'package:document_bank/data/request/profile_requests.dart';
 import 'package:document_bank/data/response/auth_reponses.dart';
+import 'package:document_bank/data/response/profile_responses.dart';
 import 'package:document_bank/data/source/remote_source.dart';
+import 'package:document_bank/domain/model/account_setup.dart';
 import 'package:document_bank/domain/repository/auth_repository.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
@@ -101,6 +104,22 @@ class AuthRepositoryImpl extends AuthRepository {
         final ForgotPasswordResponse response =
             await _remoteSource.forgotPassword(email);
         return Right(response);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
+
+  @override
+  Future<Either<CustomFailure, AccountSetup>> accountSetup(
+      AccountSetupRequest accountSetupRequest) async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final AccountSetupResponse response =
+            await _remoteSource.accountSetup(accountSetupRequest);
+        return Right(AccountSetup.fromAccountSetupResponse(response));
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
       }
