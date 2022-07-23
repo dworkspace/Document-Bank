@@ -30,6 +30,7 @@ import 'package:document_bank/domain/usecase/fetch_contacts_usecase.dart';
 import 'package:document_bank/domain/usecase/get_all_documents_usecase.dart';
 import 'package:document_bank/domain/usecase/get_all_notes_usecase.dart';
 import 'package:document_bank/domain/usecase/get_memos_usecase.dart';
+import 'package:document_bank/domain/usecase/get_note_folders_usecase.dart';
 import 'package:document_bank/domain/usecase/get_profile_usecase.dart';
 import 'package:document_bank/domain/usecase/get_reminders_usecase.dart';
 import 'package:document_bank/domain/usecase/get_todo_goals_usecase.dart';
@@ -51,6 +52,7 @@ import 'package:document_bank/presentation/contacts/blocs/contact/contact_bloc.d
 import 'package:document_bank/presentation/docs/blocs/doc/docs_cubit.dart';
 import 'package:document_bank/presentation/goal/blocs/goal_bloc.dart';
 import 'package:document_bank/presentation/landing/blocs/landing/landing_cubit.dart';
+import 'package:document_bank/presentation/notes/blocs/add_note/add_note_cubit.dart';
 import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
 import 'package:document_bank/presentation/profile/blocs/edit_profile/edit_profile_cubit.dart';
 import 'package:document_bank/presentation/profile/blocs/profile/profile_cubit.dart';
@@ -116,16 +118,20 @@ Future<void> initAppModule() async {
 
   //blocs
   instance.registerLazySingleton<AuthBloc>(() => AuthBloc(instance()));
-  instance.registerLazySingleton<FolderCubit>(() => FolderCubit(instance()));
+  instance.registerLazySingleton<FolderCubit>(
+      () => FolderCubit(instance(), instance()));
 
   //common usecase
   instance.registerLazySingleton<GetAllFoldersUseCase>(
       () => GetAllFoldersUseCase(instance()));
+  instance.registerLazySingleton<GetNoteFoldersUseCase>(
+      () => GetNoteFoldersUseCase(instance()));
 
   initForgotPasswordModule();
   initEmailVerifyModule();
   initLandingModule();
   initNoteModule();
+  initAddNoteModule();
   initDocumentsModule();
   initRemindersModule();
   initGoalModule();
@@ -153,7 +159,7 @@ void initAccountSetupModule() {
     instance.registerFactory<AccountSetupUseCase>(
         () => AccountSetupUseCase(instance()));
     instance.registerFactory<AccountSetupCubit>(
-        () => AccountSetupCubit(instance(),instance()));
+        () => AccountSetupCubit(instance(), instance()));
   }
 }
 
@@ -238,12 +244,18 @@ void initNoteModule() {
   if (!GetIt.I.isRegistered<GetAllNotesUseCase>()) {
     instance.registerLazySingleton<GetAllNotesUseCase>(
         () => GetAllNotesUseCase(instance()));
+    instance.registerLazySingleton<NotesCubit>(() => NotesCubit(instance()));
+  }
+}
+
+initAddNoteModule() {
+  if (!GetIt.I.isRegistered<AddNoteUseCase>()) {
     instance.registerLazySingleton<AddNoteUseCase>(
         () => AddNoteUseCase(instance()));
     instance.registerLazySingleton<UpdateNoteUseCase>(
         () => UpdateNoteUseCase(instance()));
-    instance.registerLazySingleton<NotesCubit>(
-        () => NotesCubit(instance(), instance(), instance()));
+    instance.registerLazySingleton<AddNoteCubit>(
+        () => AddNoteCubit(instance(), instance()));
   }
 }
 

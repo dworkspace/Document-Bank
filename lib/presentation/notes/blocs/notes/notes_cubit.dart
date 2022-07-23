@@ -1,9 +1,8 @@
-import 'dart:ffi';
-
 import 'package:bloc/bloc.dart';
 import 'package:document_bank/core/utils/enum.dart';
 import 'package:document_bank/data/request/note_requests.dart';
 import 'package:document_bank/domain/model/note.dart';
+import 'package:document_bank/domain/model/note_folder.dart';
 import 'package:document_bank/domain/usecase/add_note_usecase.dart';
 import 'package:document_bank/domain/usecase/get_all_notes_usecase.dart';
 import 'package:document_bank/domain/usecase/update_note_usecase.dart';
@@ -13,16 +12,14 @@ part 'notes_state.dart';
 class NotesCubit extends Cubit<NotesState> {
   NotesCubit(
     this._getAllNotesUseCase,
-    this._addNoteUseCase,
-    this._updateNoteUseCase,
-  ) : super(NotesState()) {
-    getAllNotes();
-  }
+  ) : super(NotesState());
 
-  void getAllNotes() async {
+
+
+  void getFolderNotes(NoteFolder folder) async {
     emit(state.copyWith(status: StateStatusEnum.loading));
 
-    final response = await _getAllNotesUseCase.execute(Void);
+    final response = await _getAllNotesUseCase.execute(folder);
 
     response.fold(
       (fail) => emit(state.copyWith(
@@ -32,49 +29,8 @@ class NotesCubit extends Cubit<NotesState> {
     );
   }
 
-  void addNote(AddNoteRequest request) async {
-    emit(state.copyWith(addNoteStatus: StateStatusEnum.loading));
 
-    final response = await _addNoteUseCase.execute(request);
-
-    response.fold(
-      (fail) => emit(
-        state.copyWith(
-            addNoteStatus: StateStatusEnum.failure,
-            addNoteErrorMsg: fail.message),
-      ),
-      (data) => emit(
-        state.copyWith(
-          addNoteStatus: StateStatusEnum.success,
-          status: StateStatusEnum.success,
-          notes: data,
-        ),
-      ),
-    );
-  }
-
-  void updateNote(AddNoteRequest request) async {
-    emit(state.copyWith(addNoteStatus: StateStatusEnum.loading));
-
-    final response = await _updateNoteUseCase.execute(request);
-
-    response.fold(
-      (fail) => emit(
-        state.copyWith(
-            addNoteStatus: StateStatusEnum.failure,
-            addNoteErrorMsg: fail.message),
-      ),
-      (data) => emit(
-        state.copyWith(
-          addNoteStatus: StateStatusEnum.success,
-          status: StateStatusEnum.success,
-          notes: data,
-        ),
-      ),
-    );
-  }
 
   final GetAllNotesUseCase _getAllNotesUseCase;
-  final AddNoteUseCase _addNoteUseCase;
-  final UpdateNoteUseCase _updateNoteUseCase;
+
 }

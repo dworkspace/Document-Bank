@@ -13,6 +13,7 @@ import 'package:document_bank/data/response/memo_responses.dart';
 import 'package:document_bank/data/response/note_responses.dart';
 import 'package:document_bank/data/response/profile_responses.dart';
 import 'package:document_bank/data/response/reminder_responses.dart';
+import 'package:document_bank/domain/model/note_folder.dart';
 
 import '../response/goal_responses.dart';
 
@@ -44,6 +45,8 @@ abstract class RemoteSource {
 
   Future<List<FolderResponse>> getAllFolders();
 
+  Future<List<NoteFolderResponse>> getNoteFolders();
+
   Future<List<AddDocumentResponse>> addDocuments(
       AddDocumentsRequest addDocumentsRequest);
 
@@ -53,7 +56,7 @@ abstract class RemoteSource {
 
   Future<List<DocumentResponse>> getDocumentsOfFolder(int folderId);
 
-  Future<List<NoteResponse>> getAllNotes();
+  Future<List<NoteResponse>> getAllNotesOfFolder(NoteFolder noteFolder);
 
   Future<List<NoteResponse>> saveNote(AddNoteRequest addNoteRequest);
 
@@ -273,6 +276,20 @@ class RemoteSourceImpl implements RemoteSource {
   }
 
   @override
+  Future<List<NoteFolderResponse>> getNoteFolders() async {
+    try {
+      final noteFolderResponse = await dio.get("/note-folder");
+      final mapBody = noteFolderResponse.data;
+      final List<Map<String, dynamic>> _list =
+          List<Map<String, dynamic>>.from(mapBody['data']);
+      return List<NoteFolderResponse>.from(
+          _list.map((e) => NoteFolderResponse.fromJson(e))).toList();
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
   Future<List<AddDocumentResponse>> addDocuments(
       AddDocumentsRequest addDocumentsRequest) async {
     try {
@@ -302,9 +319,9 @@ class RemoteSourceImpl implements RemoteSource {
   }
 
   @override
-  Future<List<NoteResponse>> getAllNotes() async {
+  Future<List<NoteResponse>> getAllNotesOfFolder(NoteFolder noteFolder) async {
     try {
-      final notesResponse = await dio.get("/note");
+      final notesResponse = await dio.get("/note?folder=${noteFolder.id}");
       final mapBody = notesResponse.data;
       final List<Map<String, dynamic>> _list =
           List<Map<String, dynamic>>.from(mapBody['data']);

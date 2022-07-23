@@ -4,6 +4,7 @@ import 'package:document_bank/core/router/arguments/reset_forgot_password_args.d
 import 'package:document_bank/core/router/arguments/set_reminder_arg.dart';
 import 'package:document_bank/core/router/arguments/verify_email_arg.dart';
 import 'package:document_bank/domain/model/folder.dart';
+import 'package:document_bank/domain/model/note_folder.dart';
 import 'package:document_bank/domain/model/profile.dart';
 import 'package:document_bank/presentation/add_document/pages/add_document_page.dart';
 import 'package:document_bank/presentation/auth/pages/account_setup_page.dart';
@@ -17,6 +18,7 @@ import 'package:document_bank/presentation/docs/pages/folder_documents_page.dart
 import 'package:document_bank/presentation/goal/pages/top_goals_page.dart';
 import 'package:document_bank/presentation/landing/pages/landing_page.dart';
 import 'package:document_bank/presentation/notes/pages/add_note_page.dart';
+import 'package:document_bank/presentation/notes/pages/folder_notes_page.dart';
 import 'package:document_bank/presentation/profile/blocs/edit_profile/edit_profile_cubit.dart';
 import 'package:document_bank/presentation/profile/pages/about_us_page.dart';
 import 'package:document_bank/presentation/profile/pages/change_password_page.dart';
@@ -33,6 +35,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../presentation/add_document/blocs/add_documents/add_documents_bloc.dart';
 import '../../presentation/auth/blocs/account_setup/account_setup_cubit.dart';
 import '../../presentation/contacts/blocs/contact/contact_bloc.dart';
+import '../../presentation/notes/blocs/add_note/add_note_cubit.dart';
 import '../../presentation/reminder/blocs/set_reminder/set_reminder_cubit.dart';
 
 class Routes {
@@ -48,6 +51,7 @@ class Routes {
   static const String mainRoute = "/main";
   static const String addDocumentsRoute = "/addDocuments";
   static const String contactsRoute = "/contacts";
+  static const String notesOfFolderRoute = "/notesOfFolder";
   static const String addNoteRoute = "/addNote";
   static const String goalsRoute = "/goals";
   static const String editProfileRoute = "/editProfile";
@@ -95,6 +99,11 @@ class RouteGenerator {
                 ));
       case Routes.landingRoute:
         return MaterialPageRoute(builder: (_) => const LandingPage());
+      case Routes.notesOfFolderRoute:
+        return MaterialPageRoute(
+            builder: (_) => FolderNotesPage(
+                  noteFolder: routeSettings.arguments as NoteFolder,
+                ));
       case Routes.addDocumentsRoute:
         initAddDocumentsModule();
         return MaterialPageRoute(
@@ -110,11 +119,8 @@ class RouteGenerator {
         );
       case Routes.editProfileRoute:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => instance<EditProfileCubit>(),
-            child: EditProfilePage(
-              profile: routeSettings.arguments as Profile,
-            ),
+          builder: (_) => EditProfilePage(
+            profile: routeSettings.arguments as Profile,
           ),
         );
       case Routes.myRemindersRoute:

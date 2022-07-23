@@ -1,6 +1,6 @@
 import 'package:document_bank/presentation/docs/pages/all_docs_page.dart';
 import 'package:document_bank/presentation/home/pages/home_page.dart';
-import 'package:document_bank/presentation/notes/pages/all_notes_page.dart';
+import 'package:document_bank/presentation/notes/pages/note_folders_page.dart';
 import 'package:document_bank/presentation/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +18,7 @@ class _LandingPageState extends State<LandingPage> {
   final List<Widget> _pages = [
     const HomePage(),
     const AllDocsPage(),
-    const AllNotesPage(),
+    const NoteFoldersPage(),
     Text("Chat"),
     const ProfilePage(),
   ];
