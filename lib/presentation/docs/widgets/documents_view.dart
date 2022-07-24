@@ -5,7 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/utils/dialog_utils.dart';
+import '../../../core/router/arguments/doc_view_pager_args.dart';
+import '../../../core/router/routes_manager.dart';
 
 class DocumentsView extends StatefulWidget {
   const DocumentsView({Key? key}) : super(key: key);
@@ -41,7 +42,17 @@ class _DocumentsViewState extends State<DocumentsView> {
             itemCount: _documents.length,
             itemBuilder: (context, index) {
               final Document _document = _documents[index];
-              return _photoWidget(_document);
+              return _photoWidget(_document,(){
+                final DocViewPagerArgs _args = DocViewPagerArgs(
+                  currentIndex: index,
+                  documents: state.documents,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.documentsViewPagerRoute,
+                  arguments: _args,
+                );
+              });
             },
           );
         } else {
@@ -51,17 +62,14 @@ class _DocumentsViewState extends State<DocumentsView> {
     );
   }
 
-  Widget _photoWidget(Document _document) {
+  Widget _photoWidget(Document _document,VoidCallback? onTap) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Stack(
         fit: StackFit.expand,
         children: [
           GestureDetector(
-            onTap: () {
-              DialogUtils.buildImageViewDialog(
-                  context: context, url: _document.photo);
-            },
+            onTap: onTap,
             child: CachedNetworkImage(
               imageUrl: _document.photo,
               placeholder: (context, url) => const LinearProgressIndicator(),

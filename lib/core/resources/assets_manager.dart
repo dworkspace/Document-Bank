@@ -22,6 +22,10 @@ class IconAssets {
   static const String keyLockImg = "$iconPath/key-lock.png";
   static const String paperImg = "$iconPath/paper.png";
   static const String personCheckImg = "$iconPath/person-check.png";
+  static const String autoSaveImg = "$iconPath/autosave.png";
+  static const String cameraAltImg = "$iconPath/camera-alt.png";
+  static const String reminderWatchImg = "$iconPath/reminder-watch.png";
+  static const String arrowRightImg = "$iconPath/arrow-right.png";
 }
 
 class ImageAssets {

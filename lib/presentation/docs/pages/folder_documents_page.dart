@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:document_bank/core/resources/styles_manager.dart';
+import 'package:document_bank/core/router/arguments/doc_view_pager_args.dart';
+import 'package:document_bank/core/router/routes_manager.dart';
 import 'package:document_bank/core/utils/dialog_utils.dart';
 import 'package:document_bank/domain/model/folder.dart';
 import 'package:document_bank/presentation/docs/blocs/doc/docs_cubit.dart';
@@ -105,8 +107,15 @@ class _FolderDocumentsPageState extends State<FolderDocumentsPage> {
                         onLongPress: () {},
                         onTap: () {
                           if (!state.isSelectEnabled) {
-                            DialogUtils.buildImageViewDialog(
-                                context: context, url: _document.photo);
+                            final DocViewPagerArgs _args = DocViewPagerArgs(
+                              currentIndex: index,
+                              documents: widget.folder.documents,
+                            );
+                            Navigator.pushNamed(
+                              context,
+                              Routes.documentsViewPagerRoute,
+                              arguments: _args,
+                            );
                           } else {
                             context
                                 .read<DocsCubit>()

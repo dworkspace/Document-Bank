@@ -22,6 +22,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/blocs/folder_cubit.dart';
+import 'core/blocs/page/page_cubit.dart';
 import 'core/di /app_module.dart';
 
 void main() {
@@ -71,6 +72,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (_) => instance<DocsCubit>()),
             BlocProvider(create: (_) => instance<ProfileCubit>()),
             BlocProvider(create: (_) => instance<ReminderCubit>()),
+            BlocProvider(create: (_) => instance<PageCubit>()),
             BlocProvider(
                 create: (_) => instance<GoalBloc>()..add(GetAllGoals())),
           ],

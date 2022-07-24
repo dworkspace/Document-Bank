@@ -106,4 +106,23 @@ class DocumentRepositoryImpl extends DocumentRepository {
       return const Left(NoInternetFailure());
     }
   }
+
+  @override
+  Future<Either<CustomFailure, List<Folder>>> deleteDocFolder(
+      int folderId) async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final List<FolderResponse> response =
+            await _remoteSource.deleteDocFolder(folderId);
+        final List<Folder> folders =
+            List<Folder>.from(response.map((e) => Folder.fromFolderResponse(e)))
+                .toList();
+        return Right(folders);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
 }

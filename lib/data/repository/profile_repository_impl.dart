@@ -46,4 +46,20 @@ class ProfileRepositoryImpl extends ProfileRepository {
       return const Left(NoInternetFailure());
     }
   }
+
+  @override
+  Future<Either<CustomFailure, String>> changePassword(
+      ChangePasswordRequest changePasswordRequest) async {
+    if (await _networkInfo.isConnected()) {
+      try {
+        final String response =
+            await _remoteSource.changePassword(changePasswordRequest);
+        return Right(response);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NoInternetFailure());
+    }
+  }
 }

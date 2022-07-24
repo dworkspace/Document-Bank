@@ -11,6 +11,7 @@ import 'package:document_bank/data/response/auth_reponses.dart';
 import 'package:document_bank/data/response/document_responses.dart';
 import 'package:document_bank/data/response/memo_responses.dart';
 import 'package:document_bank/data/response/note_responses.dart';
+import 'package:document_bank/data/response/page_responses.dart';
 import 'package:document_bank/data/response/profile_responses.dart';
 import 'package:document_bank/data/response/reminder_responses.dart';
 import 'package:document_bank/domain/model/note_folder.dart';
@@ -45,6 +46,8 @@ abstract class RemoteSource {
 
   Future<List<FolderResponse>> getAllFolders();
 
+  Future<List<FolderResponse>> deleteDocFolder(int folderId);
+
   Future<List<NoteFolderResponse>> getNoteFolders();
 
   Future<List<AddDocumentResponse>> addDocuments(
@@ -72,6 +75,10 @@ abstract class RemoteSource {
 
   Future<ProfileResponse> updateProfile(
       UpdateProfileRequest updateProfileRequest);
+
+  Future<List<PageResponse>> getPages();
+
+  Future<String> changePassword(ChangePasswordRequest changePasswordRequest);
 }
 
 class RemoteSourceImpl implements RemoteSource {
@@ -265,6 +272,20 @@ class RemoteSourceImpl implements RemoteSource {
   Future<List<FolderResponse>> getAllFolders() async {
     try {
       final memosResponse = await dio.get("/folder");
+      final mapBody = memosResponse.data;
+      final List<Map<String, dynamic>> _list =
+          List<Map<String, dynamic>>.from(mapBody['data']);
+      return List<FolderResponse>.from(
+          _list.map((e) => FolderResponse.fromMap(e))).toList();
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<FolderResponse>> deleteDocFolder(int folderId) async {
+    try {
+      final memosResponse = await dio.delete("/folder/$folderId");
       final mapBody = memosResponse.data;
       final List<Map<String, dynamic>> _list =
           List<Map<String, dynamic>>.from(mapBody['data']);
@@ -500,6 +521,35 @@ class RemoteSourceImpl implements RemoteSource {
       final ProfileResponse profileResponse =
           ProfileResponse.fromJson(mapBody['data']);
       return profileResponse;
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<PageResponse>> getPages() async {
+    try {
+      final response = await dio.get("/page-api");
+      final mapBody = response.data;
+      final List<Map<String, dynamic>> _list =
+          List<Map<String, dynamic>>.from(mapBody['data']);
+      return List<PageResponse>.from(_list.map((e) => PageResponse.fromJson(e)))
+          .toList();
+    } on Exception catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<String> changePassword(
+      ChangePasswordRequest changePasswordRequest) async {
+    try {
+      final loginResponse = await dio.post(
+        "/change-password",
+        data: changePasswordRequest.toJson(),
+      );
+      final mapBody = loginResponse.data;
+      return mapBody["message"];
     } on Exception catch (e) {
       throw ServerException(message: e.toString());
     }

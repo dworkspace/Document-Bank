@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
+import 'package:document_bank/core/blocs/folder_cubit.dart';
 import 'package:document_bank/domain/model/document.dart';
 import 'package:document_bank/domain/model/folder.dart';
 import 'package:document_bank/domain/usecase/delete_documents_usecase.dart';
@@ -9,9 +11,17 @@ import 'package:document_bank/domain/usecase/get_all_documents_usecase.dart';
 part 'docs_state.dart';
 
 class DocsCubit extends Cubit<DocsState> {
-  DocsCubit(this._getAllDocumentsUseCase, this._deleteDocumentsUseCase)
+  DocsCubit(this._getAllDocumentsUseCase, this._deleteDocumentsUseCase,
+      this._folderCubit,)
       : super(DocsState()) {
-    getAllDocuments();
+    foldersStreamSubscription = _folderCubit.stream.listen((event) {
+      print("folder state ${event.status}");
+      if (event.status.isSuccess) {
+        emit(state.copyWith(folders: event.folders));
+        print(state.folders);
+        getAllDocuments();
+      }
+    });
   }
 
   void getAllDocuments() async {
@@ -20,22 +30,24 @@ class DocsCubit extends Cubit<DocsState> {
     final response = await _getAllDocumentsUseCase.execute(Void);
 
     response.fold(
-      (fail) => emit(state.copyWith(
-          status: DocsStateEnum.failure, errorMessage: fail.message)),
-      (data) => emit(
-        state.copyWith(
-          status: DocsStateEnum.success,
-          documents: data,
-          folders: data.getFoldersWithDocuments(),
-        ),
-      ),
+          (fail) =>
+          emit(state.copyWith(
+              status: DocsStateEnum.failure, errorMessage: fail.message)),
+          (data) =>
+          emit(
+            state.copyWith(
+              status: DocsStateEnum.success,
+              documents: data,
+              folders: data.getFoldersWithDocuments(state.folders),
+            ),
+          ),
     );
   }
 
   ///new
   void setSelectableDocs(List<Document> docs) {
     final List<SelectableDocument> _docList = List<SelectableDocument>.from(
-            docs.map((document) => SelectableDocument.fromDocument(document)))
+        docs.map((document) => SelectableDocument.fromDocument(document)))
         .toList();
     emit(state.copyWith(
       docs: _docList,
@@ -66,10 +78,10 @@ class DocsCubit extends Cubit<DocsState> {
     List<SelectableDocument> list = List.from(state.docs);
     list[list.indexWhere((element) => element.id == document.id)] =
         SelectableDocument(
-      id: document.id,
-      photo: document.photo,
-      isSelected: !document.isSelected,
-    );
+          id: document.id,
+          photo: document.photo,
+          isSelected: !document.isSelected,
+        );
     emit(state.copyWith(
       docs: list,
       documents: state.documents,
@@ -82,7 +94,7 @@ class DocsCubit extends Cubit<DocsState> {
     String ids = "";
 
     List<SelectableDocument> _selectedDocs =
-        state.docs.where((element) => element.isSelected == true).toList();
+    state.docs.where((element) => element.isSelected == true).toList();
 
     if (_selectedDocs.length > 1) {
       for (var element in _selectedDocs.take(state.documents.length - 1)) {
@@ -95,44 +107,60 @@ class DocsCubit extends Cubit<DocsState> {
     final response = await _deleteDocumentsUseCase.execute(ids);
 
     response.fold(
-      (fail) => emit(state.copyWith(
-        deleteStatus: DocsStateEnum.failure,
-        deleteErrorMsg: fail.message,
-        documents: state.documents,
-        folders: state.folders,
-      )),
-      (data) => emit(state.copyWith(
-        deleteStatus: DocsStateEnum.success,
-        status: DocsStateEnum.success,
-        documents: data,
-        folders: data.getFoldersWithDocuments(),
-      )),
+          (fail) =>
+          emit(state.copyWith(
+            deleteStatus: DocsStateEnum.failure,
+            deleteErrorMsg: fail.message,
+            documents: state.documents,
+            folders: state.folders,
+          )),
+          (data) =>
+          emit(state.copyWith(
+            deleteStatus: DocsStateEnum.success,
+            status: DocsStateEnum.success,
+            documents: data,
+            folders: data.getFoldersWithDocuments(state.folders),
+          )),
     );
   }
 
   final GetAllDocumentsUseCase _getAllDocumentsUseCase;
   final DeleteDocumentsUseCase _deleteDocumentsUseCase;
+  final FolderCubit _folderCubit;
+  StreamSubscription? foldersStreamSubscription;
 }
 
 extension DocumentsListX on List<Document> {
-  List<Folder> getFoldersWithDocuments() {
-    List<Folder> _folders = [];
-    List<String> _folderNames = [];
-    for (var document in this) {
-      _folderNames.add(document.folder);
-    }
-
-    for (var folderName in _folderNames.toSet()) {
-      List<Document> docs = [];
+  List<Folder> getFoldersWithDocuments(List<Folder> folderList) {
+    List<Folder> _folders =[];
+    for (var value in folderList) {
+      List<Document> docs =[];
       for (var doc in this) {
-        if (folderName == doc.folder) {
+        if (value.title == doc.folder) {
           docs.add(doc);
         }
       }
-      final Folder folder = Folder(title: folderName, documents: docs);
-      _folders.add(folder);
+     value =  value.copyWith(documents: docs);
+      _folders.add(value);
+      print(value);
     }
-    print(_folders.length);
+    // List<Folder> _folders = [];
+    // List<String> _folderNames = [];
+    // for (var document in this) {
+    //   _folderNames.add(document.folder);
+    // }
+    //
+    // for (var folderName in _folderNames.toSet()) {
+    //   List<Document> docs = [];
+    //   for (var doc in this) {
+    //     if (folderName == doc.folder) {
+    //       docs.add(doc);
+    //     }
+    //   }
+    //   final Folder folder = Folder(title: folderName, documents: docs, id:);
+    //   _folders.add(folder);
+    // }
+    print(folderList[0].documents);
     return _folders;
   }
 }

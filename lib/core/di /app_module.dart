@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:document_bank/core/blocs/folder_cubit.dart';
+import 'package:document_bank/core/blocs/page/page_cubit.dart';
 import 'package:document_bank/data/network/api_client.dart';
 import 'package:document_bank/data/repository/common_repository_impl.dart';
 import 'package:document_bank/data/repository/document_repository_impl.dart';
 import 'package:document_bank/data/repository/goal_repository_impl.dart';
 import 'package:document_bank/data/repository/memo_repository_impl.dart';
+import 'package:document_bank/data/repository/page_repository_impl.dart';
 import 'package:document_bank/data/repository/profile_repository_impl.dart';
 import 'package:document_bank/data/repository/reminder_repository_impl.dart';
 import 'package:document_bank/data/source/local_source.dart';
@@ -15,15 +17,18 @@ import 'package:document_bank/domain/repository/document_repository.dart';
 import 'package:document_bank/domain/repository/goal_repository.dart';
 import 'package:document_bank/domain/repository/memo_repository.dart';
 import 'package:document_bank/domain/repository/note_repository.dart';
+import 'package:document_bank/domain/repository/page_repository.dart';
 import 'package:document_bank/domain/repository/profile_repository.dart';
 import 'package:document_bank/domain/repository/reminder_repository.dart';
 import 'package:document_bank/domain/usecase/account_setup_usecase.dart';
 import 'package:document_bank/domain/usecase/add_note_usecase.dart';
 import 'package:document_bank/domain/usecase/add_reminder_usecase.dart';
+import 'package:document_bank/domain/usecase/change_password_usecase.dart';
 import 'package:document_bank/domain/usecase/complete_goal_usecase.dart';
 import 'package:document_bank/domain/usecase/create_goal_usecase.dart';
 import 'package:document_bank/domain/usecase/create_memo_usecase.dart';
 import 'package:document_bank/domain/usecase/delete_all_goals_usecase.dart';
+import 'package:document_bank/domain/usecase/delete_doc_folder_usecase.dart';
 import 'package:document_bank/domain/usecase/delete_documents_usecase.dart';
 import 'package:document_bank/domain/usecase/delete_reminder_usecase.dart';
 import 'package:document_bank/domain/usecase/fetch_contacts_usecase.dart';
@@ -31,6 +36,7 @@ import 'package:document_bank/domain/usecase/get_all_documents_usecase.dart';
 import 'package:document_bank/domain/usecase/get_all_notes_usecase.dart';
 import 'package:document_bank/domain/usecase/get_memos_usecase.dart';
 import 'package:document_bank/domain/usecase/get_note_folders_usecase.dart';
+import 'package:document_bank/domain/usecase/get_pages_usecase.dart';
 import 'package:document_bank/domain/usecase/get_profile_usecase.dart';
 import 'package:document_bank/domain/usecase/get_reminders_usecase.dart';
 import 'package:document_bank/domain/usecase/get_todo_goals_usecase.dart';
@@ -54,6 +60,7 @@ import 'package:document_bank/presentation/goal/blocs/goal_bloc.dart';
 import 'package:document_bank/presentation/landing/blocs/landing/landing_cubit.dart';
 import 'package:document_bank/presentation/notes/blocs/add_note/add_note_cubit.dart';
 import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
+import 'package:document_bank/presentation/profile/blocs/change_password/change_password_cubit.dart';
 import 'package:document_bank/presentation/profile/blocs/edit_profile/edit_profile_cubit.dart';
 import 'package:document_bank/presentation/profile/blocs/profile/profile_cubit.dart';
 import 'package:document_bank/presentation/reminder/blocs/reminder/reminder_cubit.dart';
@@ -115,17 +122,21 @@ Future<void> initAppModule() async {
       () => ReminderRepositoryImpl(instance(), instance()));
   instance.registerLazySingleton<ProfileRepository>(
       () => ProfileRepositoryImpl(instance(), instance()));
+  instance.registerLazySingleton<PageRepository>(
+      () => PageRepositoryImpl(instance(), instance()));
 
   //blocs
   instance.registerLazySingleton<AuthBloc>(() => AuthBloc(instance()));
   instance.registerLazySingleton<FolderCubit>(
-      () => FolderCubit(instance(), instance()));
+      () => FolderCubit(instance(), instance(), instance()));
 
   //common usecase
   instance.registerLazySingleton<GetAllFoldersUseCase>(
       () => GetAllFoldersUseCase(instance()));
   instance.registerLazySingleton<GetNoteFoldersUseCase>(
       () => GetNoteFoldersUseCase(instance()));
+  instance.registerLazySingleton<DeleteDocFolderUseCase>(
+      () => DeleteDocFolderUseCase(instance()));
 
   initForgotPasswordModule();
   initEmailVerifyModule();
@@ -136,6 +147,7 @@ Future<void> initAppModule() async {
   initRemindersModule();
   initGoalModule();
   initProfileModule();
+  initPagesModule();
 }
 
 void initLoginModule() {
@@ -265,8 +277,9 @@ void initDocumentsModule() {
         () => GetAllDocumentsUseCase(instance()));
     instance.registerLazySingleton<DeleteDocumentsUseCase>(
         () => DeleteDocumentsUseCase(instance()));
+
     instance.registerLazySingleton<DocsCubit>(
-        () => DocsCubit(instance(), instance()));
+        () => DocsCubit(instance(), instance(), instance()));
   }
 }
 
@@ -290,13 +303,22 @@ void initProfileModule() {
   }
 }
 
-// void initDocumentsModule() {
-//   if (!GetIt.I.isRegistered<GetAllDocumentsUseCase>()) {
-//     instance.registerLazySingleton<GetAllDocumentsUseCase>(
-//         () => GetAllDocumentsUseCase(instance()));
-//     instance.registerLazySingleton<DocsCubit>(() => DocsCubit(instance()));
-//   }
-// }
+void initPagesModule() {
+  if (!GetIt.I.isRegistered<GetPagesUseCase>()) {
+    instance.registerLazySingleton<GetPagesUseCase>(
+        () => GetPagesUseCase(instance()));
+    instance.registerLazySingleton<PageCubit>(() => PageCubit(instance()));
+  }
+}
+
+void changePasswordModule() {
+  if (!GetIt.I.isRegistered<ChangePasswordUseCase>()) {
+    instance.registerLazySingleton<ChangePasswordUseCase>(
+        () => ChangePasswordUseCase(instance()));
+    instance.registerLazySingleton<ChangePasswordCubit>(
+        () => ChangePasswordCubit(instance()));
+  }
+}
 
 // void initRemindersModule() {
 //   if (!GetIt.I.isRegistered<GetRemindersUseCase>()) {

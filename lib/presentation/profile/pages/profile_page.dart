@@ -1,14 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:document_bank/core/blocs/page/page_cubit.dart';
 import 'package:document_bank/core/resources/assets_manager.dart';
 import 'package:document_bank/core/resources/color_manager.dart';
 import 'package:document_bank/core/resources/styles_manager.dart';
 import 'package:document_bank/core/router/routes_manager.dart';
+import 'package:document_bank/domain/model/page.dart';
 import 'package:document_bank/domain/model/profile.dart';
 import 'package:document_bank/presentation/auth/blocs/auth_bloc/auth_bloc.dart';
 import 'package:document_bank/presentation/profile/blocs/profile/profile_cubit.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:flutter_bloc/flutter_bloc.dart";
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -59,9 +60,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Column(
                     children: [
-                       CircleAvatar(
+                      CircleAvatar(
                         radius: 50.0,
-                         backgroundImage:  NetworkImage(_profile.profileURL,),
+                        backgroundImage: NetworkImage(
+                          _profile.profileURL,
+                        ),
                       ),
                       Text(
                         _profile.name,
@@ -123,7 +126,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: ColorManager.whiteColor,
                           onPressed: () {
                             Navigator.pushNamed(
-                                context, Routes.editProfileRoute,arguments: _profile);
+                                context, Routes.editProfileRoute,
+                                arguments: _profile);
                           },
                           child: Row(
                             children: [
@@ -148,64 +152,111 @@ class _ProfilePageState extends State<ProfilePage> {
             }
           },
         ),
-        GridView.builder(
-          itemCount: 6,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 8.0,
-              crossAxisSpacing: 10.0,
-              childAspectRatio: 1.5),
-          itemBuilder: (context, index) {
-            final CardContent cardContent = index.getCardContent(context);
-            return Card(
-              elevation: 8.0,
-              margin: const EdgeInsets.all(12.0),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _cardWidget(
-                  file: cardContent.iconImage,
-                  title: cardContent.title,
-                  onTap: cardContent.onTap,
+        const SizedBox(height: 24.0),
+        BlocBuilder<PageCubit, PageState>(builder: (context, pageState) {
+          if (pageState.pageStatus.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (pageState.pageStatus.failure) {
+            return Center(
+              child: Text(pageState.errorMessage),
+            );
+          } else if (pageState.pageStatus.success) {
+            final List<PageModel> _pages = pageState.pages;
+            return Expanded(
+              child: GridView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                // itemCount: _pages.length ,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.4,
                 ),
+                children: [
+                  ...List.generate(_pages.length, (index) {
+                    final PageModel _page = pageState.pages[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.pageDetailRoute,
+                          arguments: _page,
+                        );
+                      },
+                      child: Card(
+                        elevation: 8.0,
+                        margin: const EdgeInsets.all(12.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _cardWidget(
+                            iconSvg: _page.iconSvg,
+                            title: _page.title,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.changePasswordRoute);
+                    },
+                    child: Card(
+                      elevation: 8.0,
+                      margin: const EdgeInsets.all(12.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            IconAssets.eyeImg,
+                            height: 24.0,
+                            width: 24.0,
+                            fit: BoxFit.cover,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(
+                              "Change Password",
+                              textAlign: TextAlign.center,
+                              style: getRegularStyle(
+                                color: ColorManager.blackColor,
+                                fontSize: 14.0,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
             );
-          },
-        )
+          } else {
+            return Container();
+          }
+        }),
       ],
     );
-    ;
   }
 
   Widget _cardWidget(
-      {required String file, required String title, VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              file,
-              height: 30,
-              width: 30,
-              fit: BoxFit.cover,
+      {required String iconSvg, required String title, VoidCallback? onTap}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SvgPicture.string(iconSvg),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: getRegularStyle(
+              color: ColorManager.blackColor,
+              fontSize: 14.0,
             ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: getRegularStyle(
-                  color: ColorManager.blackColor,
-                  fontSize: 14.0,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
+          ),
+        )
+      ],
     );
   }
 }

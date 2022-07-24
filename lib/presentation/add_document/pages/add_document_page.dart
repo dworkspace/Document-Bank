@@ -41,6 +41,7 @@ class _AddDocumentPageState extends State<AddDocumentPage> {
           );
         } else if (state.status.isSuccess) {
           Navigator.pop(context);
+          context.read<FolderCubit>().getFolders();
           DialogUtils.buildSuccessMessageDialog(
             context,
             title: "Document Upload Success",

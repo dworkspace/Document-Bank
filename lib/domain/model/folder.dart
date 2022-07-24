@@ -8,7 +8,7 @@ class Folder {
 
   Folder({
     required this.title,
-    this.id = -1,
+    required this.id,
     this.documents = const [],
   });
 

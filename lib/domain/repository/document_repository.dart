@@ -9,6 +9,8 @@ import '../model/document.dart';
 abstract class DocumentRepository {
   Future<Either<CustomFailure, List<Folder>>> getAllFolders();
 
+  Future<Either<CustomFailure, List<Folder>>> deleteDocFolder(int folderId);
+
   Future<Either<CustomFailure, List<AddDocument>>> storeDocuments(
       AddDocumentsRequest addDocumentsRequest);
 
