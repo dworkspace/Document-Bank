@@ -6,6 +6,7 @@ class ReminderResponse {
   final String recurringPeriod;
   final String endDate;
   final String time;
+  final String reminderType;
 
   ReminderResponse({
     required this.id,
@@ -15,6 +16,7 @@ class ReminderResponse {
     required this.time,
     required this.endDate,
     required this.date,
+    required this.reminderType,
   });
 
   factory ReminderResponse.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class ReminderResponse {
       time: json['time'] ?? "",
       endDate: json["end_date"] ?? "",
       date: json["date"] ?? "",
+      reminderType: json["remainder_type"] ?? "N/A",
     );
   }
 }

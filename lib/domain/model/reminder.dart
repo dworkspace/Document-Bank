@@ -8,6 +8,7 @@ class Reminder {
   final String recurringPeriod;
   final String endDate;
   final String time;
+  final String reminderType;
 
   Reminder({
     required this.id,
@@ -17,6 +18,7 @@ class Reminder {
     required this.recurringPeriod,
     required this.endDate,
     required this.time,
+    required this.reminderType,
   });
 
   factory Reminder.fromReminderRespnse(ReminderResponse response) {
@@ -28,6 +30,7 @@ class Reminder {
       recurringPeriod: response.recurringPeriod,
       endDate: response.endDate,
       time: response.time,
+      reminderType: response.reminderType,
     );
   }
 }

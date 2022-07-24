@@ -40,67 +40,6 @@ class MyRemindersPage extends StatelessWidget {
               physics: const ClampingScrollPhysics(),
               itemBuilder: (context, index) {
                 final Reminder _reminder = _reminderList[index];
-                // return Slidable(
-                //   key: UniqueKey(),
-                //   closeOnScroll: false,
-                //   endActionPane: ActionPane(
-                //     extentRatio: 0.15,
-                //     dismissible: DismissiblePane(onDismissed: () {}),
-                //     motion: const ScrollMotion(),
-                //     children: [
-                //       SlidableAction(
-                //         onPressed: (context) {},
-                //         backgroundColor: Color(0xFF7BC043),
-                //         foregroundColor: Colors.white,
-                //         icon: Icons.archive,
-                //         label: 'Archive',
-                //       ),
-                //       SlidableAction(
-                //         onPressed: (context) {},
-                //         backgroundColor: Color(0xFF0392CF),
-                //         foregroundColor: Colors.white,
-                //         icon: Icons.save,
-                //         label: 'Save',
-                //       ),
-                //     ],
-                //   ),
-                //   child: Container(
-                //     margin: const EdgeInsets.symmetric(
-                //         vertical: 8.0, horizontal: 16.0),
-                //     child: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       children: [
-                //         Text(
-                //           _reminder.title,
-                //           style: getMediumStyle(
-                //             color: ColorManager.blackColor,
-                //             fontSize: 16.0,
-                //           ),
-                //         ),
-                //         Text(
-                //           "${_reminder.date}, ${_reminder.time}",
-                //           style: getRegularStyle(
-                //             color: ColorManager.blackColor,
-                //             fontSize: 14.0,
-                //           ),
-                //         ),
-                //         Text(
-                //           _reminder.recurringPeriod,
-                //           style: getRegularStyle(
-                //             color: ColorManager.blackColor,
-                //             fontSize: 12.0,
-                //           ).copyWith(
-                //             fontStyle: FontStyle.italic,
-                //           ),
-                //         ),
-                //         Divider(
-                //           thickness: 1.0,
-                //           color: ColorManager.grayColor.withOpacity(0.5),
-                //         )
-                //       ],
-                //     ),
-                //   ),
-                // );
                 return Container(
                   margin: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 16.0),
@@ -139,32 +78,55 @@ class MyRemindersPage extends StatelessWidget {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
-                              Text(
-                                _reminder.title,
-                                style: getMediumStyle(
-                                  color: ColorManager.blackColor,
-                                  fontSize: 16.0,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _reminder.title,
+                                      style: getMediumStyle(
+                                        color: ColorManager.blackColor,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      "${_reminder.date}, ${_reminder.time}",
+                                      style: getRegularStyle(
+                                        color: ColorManager.blackColor,
+                                        fontSize: 14.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      _reminder.recurringPeriod,
+                                      style: getRegularStyle(
+                                        color: ColorManager.blackColor,
+                                        fontSize: 12.0,
+                                      ).copyWith(
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                "${_reminder.date}, ${_reminder.time}",
-                                style: getRegularStyle(
-                                  color: ColorManager.blackColor,
-                                  fontSize: 14.0,
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 4.0),
+                                decoration: BoxDecoration(
+                                  color: _reminder.reminderType == "Notes"
+                                      ? ColorManager.primaryYellow
+                                      : ColorManager.darkBlue,
+                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
-                              ),
-                              Text(
-                                _reminder.recurringPeriod,
-                                style: getRegularStyle(
-                                  color: ColorManager.blackColor,
-                                  fontSize: 12.0,
-                                ).copyWith(
-                                  fontStyle: FontStyle.italic,
+                                child: Text(
+                                  _reminder.reminderType,
+                                  style: getRegularStyle(
+                                    color: ColorManager.whiteColor,
+                                    fontSize: 10.0,
+                                  ),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ),
