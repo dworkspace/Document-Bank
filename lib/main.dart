@@ -13,6 +13,7 @@ import 'package:document_bank/presentation/goal/blocs/goal_bloc.dart';
 import 'package:document_bank/presentation/landing/blocs/landing/landing_cubit.dart';
 import 'package:document_bank/presentation/notes/blocs/add_note/add_note_cubit.dart';
 import 'package:document_bank/presentation/notes/blocs/notes/notes_cubit.dart';
+import 'package:document_bank/presentation/profile/blocs/edit_profile/edit_profile_cubit.dart';
 import 'package:document_bank/presentation/profile/blocs/profile/profile_cubit.dart';
 import 'package:document_bank/presentation/reminder/blocs/reminder/reminder_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'core/blocs/download/download_cubit.dart';
 import 'core/blocs/folder_cubit.dart';
 import 'core/blocs/page/page_cubit.dart';
 import 'core/di /app_module.dart';
@@ -71,8 +73,10 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (_) => instance<AddNoteCubit>()),
             BlocProvider(create: (_) => instance<DocsCubit>()),
             BlocProvider(create: (_) => instance<ProfileCubit>()),
+            BlocProvider(create: (_) => instance<EditProfileCubit>()),
             BlocProvider(create: (_) => instance<ReminderCubit>()),
             BlocProvider(create: (_) => instance<PageCubit>()),
+            BlocProvider(create: (_) => instance<DownloadCubit>()),
             BlocProvider(
                 create: (_) => instance<GoalBloc>()..add(GetAllGoals())),
           ],

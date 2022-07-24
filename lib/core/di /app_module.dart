@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:document_bank/core/blocs/download/download_cubit.dart';
 import 'package:document_bank/core/blocs/folder_cubit.dart';
 import 'package:document_bank/core/blocs/page/page_cubit.dart';
 import 'package:document_bank/data/network/api_client.dart';
@@ -129,6 +130,8 @@ Future<void> initAppModule() async {
   instance.registerLazySingleton<AuthBloc>(() => AuthBloc(instance()));
   instance.registerLazySingleton<FolderCubit>(
       () => FolderCubit(instance(), instance(), instance()));
+  instance
+      .registerLazySingleton<DownloadCubit>(() => DownloadCubit(instance()));
 
   //common usecase
   instance.registerLazySingleton<GetAllFoldersUseCase>(

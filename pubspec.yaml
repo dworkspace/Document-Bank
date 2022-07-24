@@ -33,6 +33,8 @@ dependencies:
   flutter_slidable: 1.3.0
   carousel_slider: ^4.1.1
   flutter_widget_from_html: ^0.8.5
+  path_provider: ^2.0.11
+  permission_handler: ^10.0.0
 
 dev_dependencies:
   flutter_test:

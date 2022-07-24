@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 class DialogUtils {
   DialogUtils._();
 
-  static void buildLoadingDialog(BuildContext context) {
+  static void buildLoadingDialog(
+    BuildContext context, {
+    String title = "Loading...",
+  }) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -18,7 +21,7 @@ class DialogUtils {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Loading...",
+                  title,
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 const SizedBox(
